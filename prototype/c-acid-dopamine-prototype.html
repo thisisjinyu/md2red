@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>md2red · HE-0001 试色 · C 酸性·多巴胺霓虹</title>
+<style>
+/* =========================================================
+   md2red — C 酸性·多巴胺霓虹  (炭黑底 + 多色霓虹锚点)
+   结构系统与 Swiss 基线一致；仅配色/质感不同
+   ========================================================= */
+:root{
+  --c-page:#0A0A0C;        /* 展厅底 */
+  --c-card:#141418;        /* 卡片底 · 炭黑 */
+  --c-card-2:#1E1E26;      /* 次级面 */
+  --c-ink:#F5F5F7;         /* 主墨 · 近白 */
+  --c-ink-2:#9A9AA8;       /* 次级 */
+  --c-ink-3:#62626E;       /* 弱化 */
+  --c-neon-1:#C6FF3A;      /* 酸性绿 */
+  --c-neon-2:#FF2D9B;      /* 多巴胺粉 */
+  --c-neon-3:#16E0FF;      /* 电青 */
+  --c-anchor:#FF2D9B;      /* 单色锚点（小件） */
+  --c-hair:#2C2C36;        /* 衡线 */
+  --c-hair-2:#22222A;      /* 浅衡线 */
+  --grad:linear-gradient(100deg,#C6FF3A 0%,#16E0FF 46%,#FF2D9B 100%);
+
+  --t-eyebrow:25px; --t-display:104px; --t-h1:60px; --t-lead:36px; --t-body:30px;
+  --t-index:128px; --t-num:150px; --t-cap:26px; --t-source:22px;
+  --s1:8px; --s2:16px; --s3:24px; --s4:32px; --s5:48px; --s6:64px; --s7:96px; --s8:120px;
+  --canvas-w:1080px; --canvas-h:1440px; --margin:88px; --hair-w:2px;
+  --s:0.42;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:var(--c-page);}
+body{font-family:"Helvetica Neue","PingFang SC",-apple-system,"Segoe UI","Noto Sans SC",Arial,sans-serif;color:var(--c-ink);-webkit-font-smoothing:antialiased;padding:48px 32px 96px;}
+
+.toolbar{max-width:1200px;margin:0 auto 40px;}
+.toolbar .kicker{font-size:13px;letter-spacing:.22em;font-weight:600;text-transform:uppercase;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.toolbar h1{font-size:30px;font-weight:300;margin:10px 0 6px;}
+.toolbar p{font-size:15px;color:var(--c-ink-2);line-height:1.6;max-width:760px;}
+.toolbar .meta{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;}
+.toolbar .tag{font-size:12px;border:1.5px solid var(--c-hair);padding:5px 12px;color:var(--c-ink-2);letter-spacing:.04em;}
+
+.gallery{max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:36px;}
+.frame{width:calc(var(--canvas-w) * var(--s));height:calc(var(--canvas-h) * var(--s));position:relative;flex:0 0 auto;}
+.frame .label{position:absolute;top:calc(100% + 8px);left:0;font-size:12px;color:var(--c-ink-2);letter-spacing:.06em;}
+.canvas{width:var(--canvas-w);height:var(--canvas-h);transform:scale(var(--s));transform-origin:top left;background:var(--c-card);overflow:hidden;position:relative;display:flex;flex-direction:column;}
+.pad{padding:var(--margin);flex:1;display:flex;flex-direction:column;}
+
+.header{display:flex;justify-content:space-between;align-items:center;padding-bottom:var(--s3);margin-bottom:var(--s6);border-bottom:var(--hair-w) solid var(--c-hair);}
+.h-left{font-size:var(--t-eyebrow);letter-spacing:.2em;font-weight:600;color:var(--c-neon-2);text-transform:uppercase;}
+.h-right{font-size:var(--t-source);letter-spacing:.12em;color:var(--c-ink-3);display:flex;align-items:center;gap:14px;}
+.dots{display:flex;gap:10px;align-items:center;}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--c-hair);display:block;}
+.dots i.on{background:var(--c-neon-1);width:30px;border-radius:0;}
+
+.brandfoot{margin-top:auto;text-align:right;padding-top:var(--s3);border-top:var(--hair-w) solid var(--c-hair);font-size:var(--t-cap);font-weight:500;color:var(--c-ink-2);letter-spacing:.04em;}
+.spacer{flex:1;}
+
+.neon{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 24px rgba(255,45,155,.25));}
+
+.cover .content{flex:1;display:flex;flex-direction:column;justify-content:flex-end;}
+.cover .topic{font-size:var(--t-cap);color:var(--c-ink-2);letter-spacing:.04em;margin-bottom:var(--s4);}
+.cover .title{font-size:var(--t-display);font-weight:250;line-height:1.06;letter-spacing:-.01em;margin-bottom:var(--s5);}
+.cover .title b{font-weight:600;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 30px rgba(22,224,255,.3));}
+.cover .sub{font-size:var(--t-lead);color:var(--c-ink-2);font-weight:300;line-height:1.55;max-width:760px;padding-top:var(--s4);border-top:var(--hair-w) solid var(--c-hair);}
+
+.body .index{font-size:var(--t-index);font-weight:600;line-height:.9;letter-spacing:-.02em;margin-bottom:var(--s4);background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 30px rgba(198,255,58,.25));}
+.body h2{font-size:var(--t-h1);font-weight:500;line-height:1.18;letter-spacing:.005em;margin-bottom:var(--s4);}
+.body .point{font-size:var(--t-lead);font-weight:300;color:var(--c-ink-2);line-height:1.55;max-width:860px;}
+.stat{background:var(--c-card-2);padding:var(--s5) var(--s5) var(--s4);display:flex;flex-direction:column;gap:var(--s2);border-left:4px solid var(--c-neon-2);}
+.stat .num{font-size:var(--t-num);font-weight:600;line-height:.9;letter-spacing:-.02em;display:flex;align-items:baseline;gap:14px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.stat .num em{font-size:46px;font-style:normal;font-weight:500;-webkit-text-fill-color:var(--c-neon-3);color:var(--c-neon-3);background:none;filter:none;}
+.stat .cap{font-size:var(--t-cap);color:var(--c-ink-2);line-height:1.5;max-width:820px;}
+.stat .src{font-size:var(--t-source);color:var(--c-ink-3);letter-spacing:.03em;}
+
+.end .h{font-size:72px;font-weight:250;line-height:1.1;letter-spacing:-.01em;}
+.end .recap{display:flex;flex-direction:column;margin-top:var(--s5);}
+.end .recap .it{display:flex;align-items:center;gap:var(--s4);padding:var(--s3) 0;border-top:var(--hair-w) solid var(--c-hair-2);font-size:32px;font-weight:400;}
+.end .recap .it:last-child{border-bottom:var(--hair-w) solid var(--c-hair-2);}
+.end .recap .n{font-size:26px;font-weight:600;width:46px;letter-spacing:.06em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.end .cta{margin-top:var(--s5);font-size:var(--t-lead);font-weight:300;color:var(--c-ink-2);display:flex;align-items:center;gap:16px;}
+.end .cta b{font-weight:600;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
+
+.spec{max-width:1200px;margin:80px auto 0;border-top:2px solid var(--c-hair);padding-top:40px;}
+.spec h2{font-size:22px;font-weight:300;margin-bottom:6px;}
+.spec .hint{font-size:14px;color:var(--c-ink-2);margin-bottom:28px;}
+.spec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:24px;}
+.spec-block h3{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--c-ink-2);font-weight:600;margin-bottom:14px;}
+.swatch{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--c-ink-2);margin-bottom:10px;}
+.swatch i{width:34px;height:34px;display:block;border:1px solid rgba(255,255,255,.1);}
+.scale-row{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--c-hair-2);padding:9px 0;}
+.scale-row span:first-child{color:var(--c-ink);}
+.scale-row span:last-child{margin-left:auto;font-size:12px;color:var(--c-ink-3);}
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="kicker">md2red · Prototype · C</div>
+  <h1>HE-0001 试色 · C 酸性·多巴胺霓虹</h1>
+  <p>炭黑底 + 多色霓虹锚点（酸性绿 / 电青 / 多巴胺粉渐变）。结构与 Swiss 基线完全一致：统一页眉 + 封面/弹性正文/尾页 + @津玉不良言右下。数据为占位示例，待核。</p>
+  <div class="meta">
+    <span class="tag">炭黑底 #141418</span>
+    <span class="tag">霓虹渐变锚点</span>
+    <span class="tag">越大越重（霓虹发光）</span>
+    <span class="tag">8px 间距栅格</span>
+  </div>
+</div>
+
+<div class="gallery">
+
+  <div class="frame"><div class="canvas cover"><div class="pad">
+    <div class="header"><span class="h-left">HE-0001 · 晨间仪式</span><span class="h-right">向右滑 →</span></div>
+    <div class="content">
+      <div class="topic">健康饮食与生活方式</div>
+      <div class="title">改变人生的<br><b>6 个</b>晨间仪式</div>
+      <div class="sub">不靠意志力，靠系统。把早晨的前 60 分钟交给固定动作，让一整天自动进入正轨。</div>
+    </div>
+    <div class="brandfoot">@津玉不良言</div>
+  </div></div><div class="label">01 · 封面 Cover</div></div>
+
+  <div class="frame"><div class="canvas body"><div class="pad">
+    <div class="header"><span class="h-left">HE-0001 · 晨间仪式</span><span class="h-right"><span class="dots"><i class="on"></i><i></i><i></i><i></i><i></i><i></i></span></span></div>
+    <div class="index">01</div>
+    <h2>醒来先喝一杯<br>300ml 温水</h2>
+    <div class="point">一夜呼吸与排汗会流失约 0.5L 水分。先补水，再考虑咖啡因——身体的「重启键」是水，不是咖啡。</div>
+    <div class="spacer"></div>
+    <div class="stat"><div class="num">10<em>% ↓</em></div><div class="cap">晨起轻度脱水状态下，认知与专注表现平均下降约一成。</div><div class="src">示例数据 · 待核 / Journal of Nutrition</div></div>
+    <div class="brandfoot">@津玉不良言</div>
+  </div></div><div class="label">02 · 正文 Body</div></div>
+
+  <div class="frame"><div class="canvas body"><div class="pad">
+    <div class="header"><span class="h-left">HE-0001 · 晨间仪式</span><span class="h-right"><span class="dots"><i></i><i class="on"></i><i></i><i></i><i></i><i></i></span></span></div>
+    <div class="index">02</div>
+    <h2>起床 1 小时内<br>晒 15 分钟晨光</h2>
+    <div class="point">自然光是校准生物钟最强的信号。早晨这一束光，决定了你今晚几点能困。</div>
+    <div class="spacer"></div>
+    <div class="stat"><div class="num">30<em>分钟</em></div><div class="cap">规律晨光照射可让夜间入睡时间平均提前约半小时。</div><div class="src">示例数据 · 待核 / 睡眠节律研究</div></div>
+    <div class="brandfoot">@津玉不良言</div>
+  </div></div><div class="label">03 · 正文 Body</div></div>
+
+  <div class="frame"><div class="canvas body"><div class="pad">
+    <div class="header"><span class="h-left">HE-0001 · 晨间仪式</span><span class="h-right"><span class="dots"><i></i><i></i><i class="on"></i><i></i><i></i><i></i></span></span></div>
+    <div class="index">03</div>
+    <h2>早餐吃够<br>25g 蛋白质</h2>
+    <div class="point">高蛋白早餐稳定血糖、延长饱腹感，把上午的「饿到烦躁」直接摁掉。</div>
+    <div class="spacer"></div>
+    <div class="stat"><div class="num">13<em>% ↓</em></div><div class="cap">高蛋白早餐可降低全天总热量摄入约 13%。</div><div class="src">示例数据 · 待核 / Am. J. Clinical Nutrition</div></div>
+    <div class="brandfoot">@津玉不良言</div>
+  </div></div><div class="label">04 · 正文 Body</div></div>
+
+  <div class="frame"><div class="canvas body"><div class="pad">
+    <div class="header"><span class="h-left">HE-0001 · 晨间仪式</span><span class="h-right"><span class="dots"><i></i><i></i><i></i><i class="on"></i><i></i><i></i></span></span></div>
+    <div class="index">04</div>
+    <h2>10 分钟<br>唤醒身体</h2>
+    <div class="point">用轻拉伸或快走替代赖床，把核心体温和警觉度先拉起来，状态比咖啡更稳。</div>
+    <div class="spacer"></div>
+    <div class="stat"><div class="num">15<em>% ↑</em></div><div class="cap">晨间 10 分钟轻活动，可提升当天专注力约 15%。</div><div class="src">示例数据 · 待核 / Br. J. Sports Medicine</div></div>
+    <div class="brandfoot">@津玉不良言</div>
+  </div></div><div class="label">05 · 正文 Body</div></div>
+
+  <div class="frame"><div class="canvas body"><div class="pad">
+    <div class="header"><span class="h-left">HE-0001 · 晨间仪式</span><span class="h-right"><span class="dots"><i></i><i></i><i></i><i></i><i class="on"></i><i></i></span></span></div>
+    <div class="index">05</div>
+    <h2>醒后 30 分钟<br>不碰手机</h2>
+    <div class="point">把被动的信息流，换成主动的当天安排。保护多巴胺基线，别让早晨第一件事就是焦虑。</div>
+    <div class="spacer"></div>
+    <div class="stat"><div class="num">20<em>% ↑</em></div><div class="cap">晨起立刻刷手机的人群，焦虑自评平均高出约两成。</div><div class="src">示例数据 · 待核 / 数字健康调查</div></div>
+    <div class="brandfoot">@津玉不良言</div>
+  </div></div><div class="label">06 · 正文 Body</div></div>
+
+  <div class="frame"><div class="canvas body"><div class="pad">
+    <div class="header"><span class="h-left">HE-0001 · 晨间仪式</span><span class="h-right"><span class="dots"><i></i><i></i><i></i><i></i><i></i><i class="on"></i></span></span></div>
+    <div class="index">06</div>
+    <h2>写下今天<br>最重要的 3 件事</h2>
+    <div class="point">用 2 分钟把决策前置。当目标被写下来，大脑就不必整天反复消耗自己。</div>
+    <div class="spacer"></div>
+    <div class="stat"><div class="num">42<em>% ↑</em></div><div class="cap">把目标写成文字的人，达成率显著高出约 42%。</div><div class="src">示例数据 · 待核 / Dominican Univ.</div></div>
+    <div class="brandfoot">@津玉不良言</div>
+  </div></div><div class="label">07 · 正文 Body</div></div>
+
+  <div class="frame"><div class="canvas end"><div class="pad">
+    <div class="header"><span class="h-left">HE-0001 · 晨间仪式</span><span class="h-right">回顾 · RECAP</span></div>
+    <div class="h">明早，<br>挑一个先开始。</div>
+    <div class="recap">
+      <div class="it"><span class="n">01</span>先喝 300ml 温水</div>
+      <div class="it"><span class="n">02</span>晒 15 分钟晨光</div>
+      <div class="it"><span class="n">03</span>早餐吃够 25g 蛋白</div>
+      <div class="it"><span class="n">04</span>10 分钟唤醒身体</div>
+      <div class="it"><span class="n">05</span>30 分钟不碰手机</div>
+      <div class="it"><span class="n">06</span>写下今天 3 件要事</div>
+    </div>
+    <div class="cta">觉得有用，<b>收藏 + 关注</b>，明早照着做。</div>
+    <div class="brandfoot">@津玉不良言</div>
+  </div></div><div class="label">08 · 尾页 End</div></div>
+
+</div>
+
+<div class="spec">
+  <h2>C · Token 速览</h2>
+  <div class="hint">炭黑底 + 霓虹渐变。霓虹仅用于大字号/序号/数据等视觉锺点，保持克制。</div>
+  <div class="spec-grid">
+    <div class="spec-block">
+      <h3>配色 · Color</h3>
+      <div class="swatch"><i style="background:#C6FF3A"></i>酸性绿 #C6FF3A</div>
+      <div class="swatch"><i style="background:#16E0FF"></i>电青 #16E0FF</div>
+      <div class="swatch"><i style="background:#FF2D9B"></i>多巴胺粉 #FF2D9B</div>
+      <div class="swatch"><i style="background:#141418"></i>炭黑底 #141418</div>
+      <div class="swatch"><i style="background:#1E1E26"></i>次面 #1E1E26</div>
+      <div class="swatch"><i style="background:#F5F5F7"></i>主墨 #F5F5F7</div>
+    </div>
+    <div class="spec-block">
+      <h3>字阶 · Type</h3>
+      <div class="scale-row"><span style="font-size:30px;font-weight:250">Display</span><span>104 / 250</span></div>
+      <div class="scale-row"><span style="font-size:24px;font-weight:500">标题 H1</span><span>60 / 500</span></div>
+      <div class="scale-row"><span style="font-size:19px;font-weight:300">导读 Lead</span><span>36 / 300</span></div>
+      <div class="scale-row"><span style="font-size:16px;font-weight:400">正文 Body</span><span>30 / 400</span></div>
+      <div class="scale-row"><span style="font-size:20px;font-weight:600" class="neon">霓虹锺点</span><span>序号/数据 600</span></div>
+    </div>
+    <div class="spec-block">
+      <h3>质感 · Texture</h3>
+      <div class="scale-row"><span>霓虹渐变</span><span>100° 绿→青→粉</span></div>
+      <div class="scale-row"><span>发光</span><span>drop-shadow 软晕</span></div>
+      <div class="scale-row"><span>数据块</span><span>左缘 4px 霓虹</span></div>
+      <div class="scale-row"><span>字重</span><span>大字=600（重）</span></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
