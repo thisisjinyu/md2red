@@ -12,7 +12,7 @@
   <div class="toolbar">
     <div class="kicker">md2red · DECK · HE-0001 v2</div>
     <h1>HE-0001 v2 · 改变人生的 6 个晨间仪式</h1>
-    <p>按生成契约重写：封面（冻结版逐字复用）+ 正文 data×6（其中 1 页文字主导）+ close，共 8 页。正文统一 data 配方家族——遵 07 §E「编号清单体保持单一风格」，修掉 v1 把「提早起床 / 冥想塑身」做成 finding 的割裂感；变化只来自每条「有无真实数字」。皮肤 card-base.css + 组件 components.css，主题可切换，画布 1080×1440（3:4）。</p>
+    <p>按生成契约重写：封面 + 正文 data×6（含 1 页无真实数字，用同款卡去掉大数字）+ close，共 8 页。正文统一 data 配方家族——遵 07 §E「编号清单体保持单一风格」，六页同一张 .stat 卡片，变化只来自每条「有无真实数字」。皮肤 card-base.css + 组件 components.css，主题可切换，画布 1080×1440（3:4）。</p>
     <div class="switch">
       <button class="active" data-theme="theme-mint">B · 清新薄荷</button>
       <button data-theme="theme-acid">C · 酸性霓虹</button>
@@ -22,7 +22,7 @@
 
   <div class="gallery">
 
-    <!-- 封面（已锁定，逐字还原自 634b990，禁改） -->
+    <!-- 封面（冻结版基础上按用户要求删除 .topic 行） -->
     <div class="frame">
       <div class="canvas cover">
         <div class="aura"></div>
@@ -30,14 +30,13 @@
         <div class="pad">
           <div class="header"><span class="h-left">HE-0001 · 晨间仪式</span><span class="h-right">向右滑 →</span></div>
           <div class="content">
-            <div class="topic">健康饮食与生活方式 · Eat This</div>
             <div class="title">改变人生的<br><span class="d">6</span>个晨间仪式</div>
             <div class="sub">夜猫子也能变早起鸟。一套有科学支撑的早晨例程，能一口气拉高你的身体、情绪、体重和收入。</div>
           </div>
           <div class="brandfoot">@津玉不良言</div>
         </div>
       </div>
-      <div class="label">封面 · cover（冻结复用）</div>
+      <div class="label">封面 · cover（删 .topic 行）</div>
     </div>
 
     <!-- 01 去晒晨光 · data/stat -->
@@ -88,7 +87,7 @@
       <div class="label">02 · data 数字主导</div>
     </div>
 
-    <!-- 03 提醒饮食目标 · data 文字主导（无真实数字） -->
+    <!-- 03 提醒饮食目标 · data（无真实数字，用同款 .stat 卡去掉大数字） -->
     <div class="frame">
       <div class="canvas">
         <div class="pad">
@@ -99,14 +98,16 @@
           <div class="data">
             <div class="topline"><span class="idx">03</span><h2>提醒饮食目标</h2></div>
             <div class="lead">早餐的选择，往往定下了一整天的饮食基调。</div>
-            <div class="pull">把当天的热量预算写下来，<br>贴在浴室镜子上。</div>
-            <div class="how"><b>怎么做</b><span>用便签或手机闹钟标签反复提醒饮食目标。研究发现，定期收到「热量预算」提醒的人，全天更容易做出健康的食物选择。</span></div>
-            <div class="src-line">Health Promotion Practice</div>
+            <div class="stat">
+              <div class="cap">把当天的热量预算写下来、贴在浴室镜子上——定期收到「热量预算」提醒的人，一整天都更容易做出健康的食物选择。</div>
+              <div class="src">Health Promotion Practice</div>
+            </div>
+            <div class="how"><b>怎么做</b><span>用便签或手机闹钟标签反复提醒，把饮食目标放在每天一定会看到的地方。</span></div>
           </div>
           <div class="brandfoot">@津玉不良言</div>
         </div>
       </div>
-      <div class="label">03 · data 文字主导（无真实数字）</div>
+      <div class="label">03 · data（无数字·同款卡片）</div>
     </div>
 
     <!-- 04 燕麦加维C · data/stat -->
