@@ -23,13 +23,13 @@
 | **L-LONG 长清单分屏** | N 很大，一屏放不下 | 条目 >6~7 | M05 压缩 + 分屏 | 待建 |
 | **L-STACK 堆叠+符号** | 标签 + 子句 + 标记 | 条目 = label + sub | S11 | 待建 |
 
-### 其他形态（同理各自展开变体，后续补全）
+### 其他形态（各自展开变体）
 
-| 形态 | 模版/族 | 源 recipe |
-| --- | --- | --- |
-| 步骤/流程体 | T-STEP（线性 / 编号阶梯 / 前后对比） | M14 / M15 |
-| 单点强论体 | T-FINDING（大金句 / 大数字 KPI / 单图论证） | M04 / KPI |
-| 对比/测评体 | T-MATRIX（矩阵 / 横条 / 打分表） | S12 / S10 |
+| 形态 | 模版/族 | 源 recipe | 模版文件 |
+| --- | --- | --- | --- |
+| 步骤/流程体 | T-STEP（线性编号阶梯 / 前后对比） | M14 / M15 | `T-STEP.html` ✅ |
+| 单点强论体 | T-FINDING（大金句 / 大数字 KPI） | M04 / KPI | `T-FINDING.html` ✅ |
+| 对比/测评体 | T-MATRIX（对照矩阵 / 打分表） | S12 / S10 | `T-MATRIX.html` ✅ |
 
 ## 2. 选择依据（AI 语义判断的输入）
 
@@ -41,6 +41,7 @@
 - **是否有先后顺序**：有 → 其实是步骤形态 T-STEP
 - **受众语气**：反共识 / 警示 → 深色 + 重字重；种草 / 轻松 → 浅色 + 轻字重
 - **是否横向对比**：有 → 对比形态 T-MATRIX
+- **是否单点结论撑全篇**：有（一个研究/一个秘诀）→ 单点强论 T-FINDING
 
 ## 3. Deck = 语义组合（封面 + 正文 + 尾页）
 
@@ -79,13 +80,26 @@
 - **density**：≥75% 吃满；留白只能用真字段（机制/做法/来源）补；禁 spacer / flex:1；一页一焦点（序号小、数字大）
 - **skin**：card-base 三主题（mint/acid/maillard）；acid 下 .pull 左边线用 neon-2
 
-### T-STEP · 步骤/流程（from M14）
-- **slots**：header → 3-5 步，每步 = 序号 + 动作 + 结果；步骤间有连接关系
-- **density**：≥3 步；每步带结果说明，不能只剩动词
+### T-STEP · 步骤/流程（from M14） ✅ 已落地（首版·待验收）
+- **canonical 实现**：`templates/T-STEP.html`（链 card-base + 自带 .flow/.step/.snum 结构样式）。演示语料：HE-0009《4 步戒掉重盐口味》。
+- **slots**：header（编号·栏目 + .dots）→ `.flow .lead` 一句承上 → `.flow .steps` 内 3-5 个 `.step`，每步 = `.snum`（圆形序号，左侧带连接竖线表先后）+ `.col`（`.act` 动作标题 + `.res` 结果说明）。
+- **density**：≥3 步；每步必带结果说明，不能只剩动词；整页 ≥75% 吃满；禁 spacer / flex:1，脚靠 margin-top:auto。
+- **与编号清单体的边界**：清单可乱序、步骤不可。命中「有先后顺序」信号才走 T-STEP。
+- **skin**：card-base 三主题；acid 下 snum 描边用 neon-2、序号霓虹色。
 
-### T-FINDING · 单点强论（from M04 / KPI）
-- **slots**：顶 kicker/章号 → 大金句或大数字 → 来源行（18-22px mono，≤15% 底部）→ 来源行上方 hairline
-- **density**：唯一允许 ≤60% 留白的形态，但必须 3 锡点（顶 kicker + hairline + 来源行）；每套 deck ≤1-2 张
+### T-FINDING · 单点强论（from M04 / KPI） ✅ 已落地（首版·待验收）
+- **canonical 实现**：`templates/T-FINDING.html`。演示语料：WL-0008《减肥的头号秘诀》。
+- **slots（finding 页）**：header 顶 kicker（锚点 1）→ `.finding .center` 居中放 **大金句 `.quote`** 或 **大数字 `.mega` + em 单位 + `.cap` 机制**（全页唯一焦点）→ `.finding .srcwrap` hairline（锚点 2）+ `.src-line` 来源（mono 22px，锚点 3）。
+- **混用**：finding 页之外补一页可执行 `.doing`（动词清单 + 一句为什么），给尾页 recap 提供 grounded 素材。
+- **density**：**唯一允许 ≤60% 留白的形态**，但三锚点（顶 kicker + hairline + 来源行）必须齐全；每套 deck ≤1-2 张 finding 页。
+- **skin**：card-base 三主题；acid 下金句重点词 / 大数字走渐变描字。
+
+### T-MATRIX · 对比/测评（from S12 / S10） ✅ 已落地（首版·待验收）
+- **canonical 实现**：`templates/T-MATRIX.html`。演示语料：HE-0010《BMI vs 体脂率 vs 腰臀比》。
+- **slots**：header → `.matrix .lead` → `.matrix .grid`（CSS grid：1 行标题列 + 3 指标列；首行 `.colhead` 指标名，左列 `.rowhead` 维度：测什么 / 怎么测 / 看什么 / 局限，交叉 `.cell` 填对照内容）；再补一页 `.pick` 给「怎么选」结论。
+- **density**：cell 字号 ≥24（cell title band）；短语为主，避免横向挤爆；hairline 分隔，不靠卡片堆叠。
+- **禁**：异质单位（分钟 / 倍 / %）塞进同一张图表伪造可比性（见 docs/07 §E）。matrix 只做「维度对照」，不做跨指标打分塔。
+- **skin**：card-base 三主题；acid 下 colhead 走渐变。
 
 ### T-CLOSE · 收尾（from M07）
 - **slots**：标题（≤2 行，**字号 ≤ 正文 h2 量级 / 约 54px，不做超大标题**）→ 4-6 条 grounded recap（逐条对应正文，标题 + 一句后果/原因）→ **一个**收尾块（金句/CTA/旁注，三选一，一句行动话即可）
@@ -118,3 +132,5 @@
 2. 写选择依据 rubric → 拿 **HE-0001**（每条带研究数据 → L-DATA 数字主导 File Card + 期号封面 + M07 小结尾页）走语义判断跟通 Extract → Classify → Route → Fill → Render
 3. 再拿 **WL-0001**（原因/后果 → L-LEDGER 重型）走一遍，对比体现同形态不同版式
 4. 逐步补 T-STEP / T-FINDING / T-MATRIX 及各自变体
+5. **接替轮（2026-06-19）**：一次补齐 **T-STEP / T-FINDING / T-MATRIX** 三形态首版变体（HE-0009 / WL-0008 / HE-0010 各跑一篇占位 deck），落为 `templates/` 文件并登记本表 §1 / §4，待用户验收后冻结（docs/07 §G）。
+6. 待补：L-LONG / L-STACK 长清单族；各形态前后对比（M15）/ 打分表（S10）二级变体。
