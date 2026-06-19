@@ -12,11 +12,10 @@
      纪律：6 页结构 / 网格 / UI / 阅读动线 全程零变化，只换内容。
      ============================================================ */
 
-  /* —— UI kit 1 · 进度条（原样）—— */
-  .u-prog{display:flex;align-items:center;gap:16px;}
-  .u-prog .bar{width:200px;height:6px;background:var(--c-hair);position:relative;overflow:hidden;}
-  .u-prog .bar > i{position:absolute;left:0;top:0;bottom:0;background:var(--c-anchor);}
-  .u-prog .pg{font-family:var(--font-mono);font-size:22px;color:var(--c-ink-3);letter-spacing:.08em;}
+  /* —— UI kit 1 · 进度点线（当前页为蓝色长条，无数字）—— */
+  .u-dots{display:flex;align-items:center;gap:10px;}
+  .u-dots i{width:10px;height:10px;border-radius:50%;background:var(--c-hair);display:block;}
+  .u-dots i.on{width:30px;border-radius:5px;background:var(--c-anchor);}
 
   /* —— 网格 · 固定三带：标题带（高度锁死）→ 焦点带 → 操作带 —— */
   .u-card .body{flex:1;display:flex;flex-direction:column;}
@@ -52,7 +51,7 @@
   body.theme-acid .u-focus{border-left-color:var(--c-neon-2);}
   body.theme-acid .u-focus .num{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
   body.theme-acid .u-focus .num em{-webkit-text-fill-color:var(--c-anchor-2);color:var(--c-anchor-2);background:none;}
-  body.theme-acid .u-prog .bar > i{background:var(--c-neon-1);}
+  body.theme-acid .u-dots i.on{background:var(--c-neon-1);}
   body.theme-acid .u-action .ico{border-color:var(--c-neon-2);color:var(--c-neon-1);}
   body.theme-maillard .u-focus{border-left-color:var(--c-anchor-2);}
 </style>
@@ -62,11 +61,11 @@
   <div class="toolbar">
     <div class="kicker">md2red · DEMO · 统一设计系统</div>
     <h1>四层一起上，6 页严格同一套</h1>
-    <p>每页都用同一套：① 固定三带网格（标题带高度锁死 → 焦点带 → 操作带），大数字落在同一条基线；② 三级表面 + 焦点面板让数字浮起；③ 固定 UI kit（进度条 + 序号 chip + 操作条）；④ 固定阅读动线（序号·标题 → 一句导语 → 数字焦点 → 怎么做）　03「提醒饮食目标」没有数字，但仍用同一个焦点面板，只把数字换成一句主张。可切主题看色彩系统。</p>
+    <p>每页都用同一套：① 固定三带网格（标题带高度锁死 → 焦点带 → 操作带），大数字落在同一条基线；② 三级表面 + 焦点面板让数字浮起；③ 固定 UI kit（进度点线 + 序号 chip + 操作条）；④ 固定阅读动线（序号·标题 → 一句导语 → 数字焦点 → 怎么做）　03「提醒饮食目标」没有数字，但仍用同一个焦点面板，只把数字换成一句主张。可切主题看色彩系统。</p>
     <div class="grid4">
       <span><b>网格</b> 固定三带 · 焦点基线对齐</span>
       <span><b>色彩</b> 三级表面 · 锚点钉焦点</span>
-      <span><b>UI</b> 进度条 + chip + 操作条</span>
+      <span><b>UI</b> 进度点线 + chip + 操作条</span>
       <span><b>UX</b> 同一阅读动线 + 进度反馈</span>
     </div>
     <div class="switch">
@@ -99,7 +98,7 @@
     <div class="frame">
       <div class="canvas u-card">
         <div class="pad">
-          <div class="header"><span class="h-left">晨间仪式</span><span class="h-right"><span class="u-prog"><span class="bar"><i style="width:16.6%"></i></span><span class="pg">01 / 06</span></span></span></div>
+          <div class="header"><span class="h-left">晨间仪式</span><span class="h-right"><span class="u-dots"><i class="on"></i><i></i><i></i><i></i><i></i><i></i></span></span></div>
           <div class="body">
             <div class="u-title">
               <div class="idxwrap"><span class="idx">01</span></div>
@@ -122,7 +121,7 @@
     <div class="frame">
       <div class="canvas u-card">
         <div class="pad">
-          <div class="header"><span class="h-left">晨间仪式</span><span class="h-right"><span class="u-prog"><span class="bar"><i style="width:33.3%"></i></span><span class="pg">02 / 06</span></span></span></div>
+          <div class="header"><span class="h-left">晨间仪式</span><span class="h-right"><span class="u-dots"><i></i><i class="on"></i><i></i><i></i><i></i><i></i></span></span></div>
           <div class="body">
             <div class="u-title">
               <div class="idxwrap"><span class="idx">02</span></div>
@@ -145,7 +144,7 @@
     <div class="frame">
       <div class="canvas u-card">
         <div class="pad">
-          <div class="header"><span class="h-left">晨间仪式</span><span class="h-right"><span class="u-prog"><span class="bar"><i style="width:50%"></i></span><span class="pg">03 / 06</span></span></span></div>
+          <div class="header"><span class="h-left">晨间仪式</span><span class="h-right"><span class="u-dots"><i></i><i></i><i class="on"></i><i></i><i></i><i></i></span></span></div>
           <div class="body">
             <div class="u-title">
               <div class="idxwrap"><span class="idx">03</span></div>
@@ -168,7 +167,7 @@
     <div class="frame">
       <div class="canvas u-card">
         <div class="pad">
-          <div class="header"><span class="h-left">晨间仪式</span><span class="h-right"><span class="u-prog"><span class="bar"><i style="width:66.6%"></i></span><span class="pg">04 / 06</span></span></span></div>
+          <div class="header"><span class="h-left">晨间仪式</span><span class="h-right"><span class="u-dots"><i></i><i></i><i></i><i class="on"></i><i></i><i></i></span></span></div>
           <div class="body">
             <div class="u-title">
               <div class="idxwrap"><span class="idx">04</span></div>
@@ -191,7 +190,7 @@
     <div class="frame">
       <div class="canvas u-card">
         <div class="pad">
-          <div class="header"><span class="h-left">晨间仪式</span><span class="h-right"><span class="u-prog"><span class="bar"><i style="width:83.3%"></i></span><span class="pg">05 / 06</span></span></span></div>
+          <div class="header"><span class="h-left">晨间仪式</span><span class="h-right"><span class="u-dots"><i></i><i></i><i></i><i></i><i class="on"></i><i></i></span></span></div>
           <div class="body">
             <div class="u-title">
               <div class="idxwrap"><span class="idx">05</span></div>
@@ -214,7 +213,7 @@
     <div class="frame">
       <div class="canvas u-card">
         <div class="pad">
-          <div class="header"><span class="h-left">晨间仪式</span><span class="h-right"><span class="u-prog"><span class="bar"><i style="width:100%"></i></span><span class="pg">06 / 06</span></span></span></div>
+          <div class="header"><span class="h-left">晨间仪式</span><span class="h-right"><span class="u-dots"><i></i><i></i><i></i><i></i><i></i><i class="on"></i></span></span></div>
           <div class="body">
             <div class="u-title">
               <div class="idxwrap"><span class="idx">06</span></div>
