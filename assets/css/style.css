@@ -278,6 +278,83 @@ body {
   background-size:5px 5px; opacity:0.16;
 }
 
+/* ====================================================================
+   THEMES — contemporary digital / experimental aesthetics
+   ==================================================================== */
+
+/* 14. Acid / Acidwave (酸性) — holographic laser + neon glow */
+.card[data-theme="acid"] {
+  --card-bg:#07070c; --card-ink:#f4f0ff; --card-dim:#b3a6e6; --card-accent:#c6ff00; --card-rule:rgba(255,255,255,0.18);
+  --font-serif:"Arial Black",Arial,sans-serif; --font-cjk:Arial,"Noto Sans SC",sans-serif;
+  background:
+    radial-gradient(120% 80% at 82% 0%, #ff00a8 0%, transparent 46%),
+    radial-gradient(120% 80% at 0% 100%, #00e5ff 0%, transparent 46%),
+    #07070c;
+}
+.card[data-theme="acid"]::before { border:1px solid rgba(255,255,255,0.18); }
+.card[data-theme="acid"] .card-eyebrow { color:#c6ff00; text-shadow:0 0 12px #c6ff00; }
+.card[data-theme="acid"] .card-body h1 { color:#fff; text-shadow:0 0 26px #ff00a8, 0 0 8px #00e5ff; letter-spacing:-1px; }
+.card[data-theme="acid"] .card-body h3 { color:#c6ff00; }
+.card[data-theme="acid"] .card-body blockquote { color:#d8ccff; }
+
+/* 15. Y2K chrome (铬感) — millennium silver + bubbly */
+.card[data-theme="y2k"] {
+  --card-bg:#dfe9f5; --card-ink:#1b2433; --card-dim:#5a6b85; --card-accent:#ff43a4; --card-rule:rgba(27,36,51,0.18);
+  --font-serif:"Arial Black",Arial,sans-serif; --font-cjk:Arial,"Noto Sans SC",sans-serif;
+  background:linear-gradient(165deg, #eef4fb 0%, #c2d2e8 55%, #9fb3d1 100%);
+}
+.card[data-theme="y2k"]::before { border:none; }
+.card[data-theme="y2k"] .card-eyebrow { color:#ff43a4; }
+.card[data-theme="y2k"] .card-body h1 { color:#aab6c8; letter-spacing:-1px; text-shadow:0 2px 0 #fff, 0 4px 8px rgba(0,0,0,0.25), 0 -1px 0 #6b7a93; }
+.card[data-theme="y2k"] .card-body h3 { color:#2aa7ff; }
+
+/* 16. Frutiger Aero — glossy aqua/green, fresh tech */
+.card[data-theme="aero"] {
+  --card-bg:#bdeaff; --card-ink:#0f3b3a; --card-dim:#3f6f63; --card-accent:#00a86b; --card-rule:rgba(15,59,58,0.18);
+  --font-serif:"Helvetica Neue",Arial,sans-serif; --font-cjk:Arial,"Noto Sans SC",sans-serif;
+  background:linear-gradient(180deg, #a6e9ff 0%, #d9f7e6 60%, #bff0c5 100%);
+}
+.card[data-theme="aero"]::before { inset:36px; border:1px solid rgba(255,255,255,0.7); box-shadow:inset 0 0 60px rgba(255,255,255,0.5); }
+.card[data-theme="aero"] .card-eyebrow { color:#00a86b; }
+.card[data-theme="aero"] .card-body h1 { color:#0f5a3a; text-shadow:0 1px 0 rgba(255,255,255,0.85); }
+.card[data-theme="aero"] .card-body h3 { color:#0a8acb; }
+
+/* 17. Glassmorphism (玻璃拟态) — frosted panel over gradient */
+.card[data-theme="glass"] {
+  --card-bg:#5b6cff; --card-ink:#ffffff; --card-dim:#e6e8ff; --card-accent:#ffffff; --card-rule:rgba(255,255,255,0.4);
+  --font-serif:"Helvetica Neue",Arial,"Noto Sans SC",sans-serif; --font-cjk:"Noto Sans SC",sans-serif;
+  background:
+    radial-gradient(120% 90% at 10% 10%, #7b5cff 0%, transparent 50%),
+    radial-gradient(120% 90% at 90% 90%, #ff5ca8 0%, transparent 50%),
+    linear-gradient(135deg, #5b6cff, #3ad1ff);
+}
+.card[data-theme="glass"]::before { display:none; }
+.card[data-theme="glass"] .card-body {
+  background:rgba(255,255,255,0.16); border:1px solid rgba(255,255,255,0.45);
+  border-radius:32px; padding:56px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.6);
+}
+.card[data-theme="glass"] .card-eyebrow { color:#fff; }
+.card[data-theme="glass"] .card-body h1 { color:#fff; }
+.card[data-theme="glass"] .card-body h3 { color:#fff; }
+.card[data-theme="glass"] .card-foot { color:rgba(255,255,255,0.85); }
+.card[data-theme="glass"] .card-foot .page-no { color:#fff; }
+
+/* 18. Anti-design / Maximalism (反设计 / 极繁) — clashing, chaotic */
+.card[data-theme="anti"] {
+  --card-bg:#c6ff3a; --card-ink:#101010; --card-dim:#444444; --card-accent:#ff2e63; --card-rule:#101010;
+  --font-serif:"Times New Roman",Georgia,serif; --font-cjk:"Noto Sans SC",sans-serif;
+  background:#c6ff3a;
+}
+.card[data-theme="anti"]::before { inset:0; border:10px solid #101010; }
+.card[data-theme="anti"] .card-eyebrow { display:inline-flex; align-self:flex-start; background:#2d00f7; color:#fff; padding:6px 14px; transform:rotate(-3deg); }
+.card[data-theme="anti"] .card-eyebrow::after { display:none; }
+.card[data-theme="anti"] .card-body h1 { color:#ff2e63; transform:rotate(-2deg); text-transform:uppercase; font-size:104px; }
+.card[data-theme="anti"] .card-body h2 { color:#2d00f7; font-family:"Courier New",monospace; }
+.card[data-theme="anti"] .card-body h3 { color:#101010; background:#ffe600; display:inline; padding:2px 8px; }
+.card[data-theme="anti"] .card-body blockquote { background:#ff2e63; color:#fff; border-left:none; padding:20px; font-style:normal; font-family:"Courier New",monospace; }
+.card[data-theme="anti"] .card-body mark { background:#00e5ff; }
+
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
   body { height: auto; overflow: auto; }
