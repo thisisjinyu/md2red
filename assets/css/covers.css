@@ -79,6 +79,82 @@
 .cv-glass-split.layout-split .li-content { padding:92px 60px; }
 
 /* ====================================================================
+   OTHER-THEME COVER VARIANTS — 其他 11 个风格的专属封面方案
+   ==================================================================== */
+
+/* Bauhaus 包豪斯 */
+.cv-bauhaus-block.layout-split .card-media { width:48%; }
+.cv-bauhaus-block.layout-split .li-content { padding:96px 64px; border-left:12px solid #d7263d; }
+.card.role-cover.cv-bauhaus-block .card-body h1 { font-size:84px; }
+.cv-bauhaus-circle.layout-frame .card-media { width:560px; height:560px; border-radius:50%; margin:0 auto 48px; border:14px solid #0b5cab; }
+.cv-bauhaus-circle.layout-frame::after { display:none; }
+.cv-bauhaus-circle .card-eyebrow { justify-content:center; }
+.cv-bauhaus-circle .card-eyebrow, .cv-bauhaus-circle .card-body { text-align:center; }
+.cv-bauhaus-band.layout-top .card-media { height:46%; }
+.cv-bauhaus-band.layout-top .card-media::after { content:""; position:absolute; left:0; bottom:0; width:100%; height:22px; background:#f4b400; }
+.card.role-cover.cv-bauhaus-band .card-body h1 { font-size:96px; }
+
+/* Mondrian 蒙德里安 */
+.cv-mondrian-module.layout-module .card-media { width:380px; height:380px; }
+.cv-mondrian-gridframe.layout-frame .card-media { height:540px; border:16px solid #111; }
+.cv-mondrian-gridframe.layout-frame::after { display:none; }
+.cv-mondrian-topband.layout-top .card-media { height:44%; border-bottom:16px solid #111; }
+
+/* Brutalism 粗野主义 */
+.cv-brutalism-slab.layout-module .card-media { width:380px; height:380px; }
+.cv-brutalism-raw.layout-top .card-media { height:52%; }
+.cv-brutalism-raw.layout-top .card-media img { filter:grayscale(1) contrast(1.1); }
+.card.role-cover.cv-brutalism-raw .card-body h1 { font-size:100px; }
+.cv-brutalism-mono.layout-bg .card-media img { filter:grayscale(1) contrast(1.15) brightness(0.7); }
+.cv-brutalism-mono.layout-bg .li-panel { background:#000; border:4px solid #fff; }
+
+/* Art Deco 装饰艺术 */
+.cv-artdeco-goldframe.layout-frame .card-media { height:560px; }
+.cv-artdeco-plate.layout-bg .card-media img { filter:sepia(0.2) brightness(0.5) contrast(1.05); }
+.cv-artdeco-plate.layout-bg .li-content { justify-content:center; text-align:center; }
+.cv-artdeco-plate.layout-bg .li-panel { background:transparent; padding:0; }
+.cv-artdeco-plate.layout-bg .li-panel .card-eyebrow { justify-content:center; }
+.cv-artdeco-symtop.layout-top .card-media { height:48%; }
+.cv-artdeco-symtop .card-eyebrow { justify-content:center; }
+.cv-artdeco-symtop .card-eyebrow, .cv-artdeco-symtop .card-body { text-align:center; }
+
+/* Memphis 孟菲斯 */
+.cv-memphis-pop.layout-frame .card-media { height:520px; border-radius:28px; border:8px solid #38c6d9; }
+.card.role-cover.cv-memphis-pop .card-body h1 { font-size:88px; }
+.cv-memphis-band.layout-top .card-media { height:46%; border-radius:0 0 40px 40px; }
+.card.role-cover.cv-memphis-band .card-body h1 { font-size:92px; }
+
+/* Vaporwave 蒸汽波 */
+.cv-vaporwave-neon.layout-bg .card-media img { filter:saturate(1.4) contrast(1.1) brightness(0.8); }
+.cv-vaporwave-glitchtop.layout-top .card-media { height:50%; }
+.cv-vaporwave-glitchtop.layout-top .card-media img { filter:saturate(1.4) hue-rotate(-10deg); }
+
+/* Cyberpunk 赛博朋克 */
+.cv-cyberpunk-hud.layout-bg .card-media img { filter:contrast(1.2) brightness(0.6) saturate(1.2); }
+.cv-cyberpunk-splitscan.layout-split .card-media { width:50%; }
+.cv-cyberpunk-splitscan.layout-split .card-media img { filter:contrast(1.15) saturate(1.2); }
+.cv-cyberpunk-splitscan.layout-split .li-content { border-left:1px solid #00ffd5; padding:92px 60px; }
+
+/* Risograph 丝网印刷 */
+.cv-riso-duotop.layout-top .card-media { height:50%; }
+.cv-riso-duoframe.layout-frame .card-media { height:540px; }
+.cv-riso-collage.layout-module .card-media { width:340px; height:420px; transform:rotate(-3deg); }
+
+/* Acid 酸性 */
+.cv-acid-flood.layout-bg .card-media img { filter:saturate(1.5) contrast(1.1) brightness(0.75); }
+.cv-acid-glowtop.layout-top .card-media { height:50%; }
+.cv-acid-glowtop.layout-top .card-media img { filter:saturate(1.4) contrast(1.1); }
+
+/* Y2K 铬感 */
+.cv-y2k-chrome.layout-bg .card-media img { filter:brightness(0.85) saturate(1.1); }
+.cv-y2k-chrome.layout-bg .li-panel { background:linear-gradient(180deg, rgba(170,182,200,0.92), rgba(120,135,160,0.92)); border:1px solid rgba(255,255,255,0.6); }
+.cv-y2k-glossycard.layout-frame .card-media { height:520px; border-radius:30px; border:4px solid rgba(255,255,255,0.8); box-shadow:0 16px 40px rgba(0,0,0,0.25); }
+
+/* Anti-design 反设计 */
+.cv-anti-skew.layout-module .card-media { width:360px; height:360px; transform:rotate(4deg); border:8px solid #2d00f7; }
+.cv-anti-tear.layout-top .card-media { height:46%; transform:rotate(-1deg); }
+
+/* ====================================================================
    PAGE ROLE — 封页 (role-cover) vs 正文 (role-body) 区分
    ==================================================================== */
 .card.role-body { background: var(--card-bg-2); }
