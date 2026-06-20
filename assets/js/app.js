@@ -1,13 +1,55 @@
 (function () {
   const CARD = { w: 1080, h: 1440 }; // 固定 3:4 竖版
 
-  // 每个风格的封面配图默认版式（下拉选 auto 时生效）
-  const COVER_LAYOUT = {
-    gallery: "top", kinfolk: "top", swiss: "top", editorial: "frame", wabi: "module",
-    aero: "bg", glass: "bg",
-    bauhaus: "split", mondrian: "module", brutalism: "module", artdeco: "frame",
-    memphis: "none", vaporwave: "bg", cyberpunk: "bg", riso: "top",
-    acid: "bg", y2k: "none", anti: "none",
+  // 各风格专属的封面方案（id 唯一，base = 底层构图骨架）
+  // 底层构图：top / bottom / split / frame / module / bg
+  const COVER_VARIANTS = {
+    gallery: [
+      { id: "museum", label: "美术馆挂画", base: "frame" },
+      { id: "fullbleed", label: "顶部满幅大标题", base: "top" },
+      { id: "diptych", label: "双联分栏", base: "split" },
+    ],
+    kinfolk: [
+      { id: "airy", label: "极简大留白", base: "top" },
+      { id: "square", label: "居中方图", base: "frame" },
+      { id: "half", label: "左右半幅", base: "split" },
+    ],
+    swiss: [
+      { id: "grid", label: "网格分栏", base: "split" },
+      { id: "bw", label: "黑白满幅 + 红块", base: "bg" },
+      { id: "toptype", label: "顶部出血 + 粗标题", base: "top" },
+    ],
+    editorial: [
+      { id: "cover", label: "全幅刊封", base: "bg" },
+      { id: "plate", label: "经典相框", base: "frame" },
+      { id: "quote", label: "引文 + 底图", base: "bottom" },
+    ],
+    wabi: [
+      { id: "scroll", label: "立轴竖图", base: "split" },
+      { id: "inset", label: "小幅嵌入", base: "module" },
+      { id: "low", label: "底部横图留白", base: "bottom" },
+    ],
+    aero: [
+      { id: "hero", label: "满版玻璃面板", base: "bg" },
+      { id: "glossytop", label: "光泽顶图", base: "top" },
+      { id: "bubble", label: "圆角浮窗", base: "frame" },
+    ],
+    glass: [
+      { id: "frosted", label: "满版磨砂", base: "bg" },
+      { id: "card", label: "玻璃卡片图", base: "frame" },
+      { id: "split", label: "分栏玻璃", base: "split" },
+    ],
+    bauhaus: [{ id: "default", label: "几何分栏", base: "split" }],
+    mondrian: [{ id: "default", label: "色块嵌图", base: "module" }],
+    brutalism: [{ id: "default", label: "粗框嵌图", base: "module" }],
+    artdeco: [{ id: "default", label: "金边相框", base: "frame" }],
+    memphis: [],
+    vaporwave: [{ id: "default", label: "满版霓虹", base: "bg" }],
+    cyberpunk: [{ id: "default", label: "满版霓虹", base: "bg" }],
+    riso: [{ id: "default", label: "套色顶图", base: "top" }],
+    acid: [{ id: "default", label: "满版酸性", base: "bg" }],
+    y2k: [],
+    anti: [],
   };
 
   const SAMPLE = `# 少吃一口糖\n你的身体会谢谢你\n\n> 真正的自律，不是和食物对抗，而是重新认识它。\n\n## 三个温柔的开始\n\n- 把含糖饮料换成**气泡水 + 柠檬**\n- 主食里掺一半**糙米与豆类**\n- 嘴馋时先喝一杯水，==等十分钟==\n\n---\n\n## 为什么有效\n\n血糖平稳了，*情绪和精力*也会跟着稳。\n\n1. 减少胰岛素的剧烈波动\n2. 延长饱腹感，自然少吃\n3. 让味觉慢慢变得敏锐\n\n> 改变不必剧烈，坚持才会发光。`;
@@ -49,6 +91,25 @@
     return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
   }
 
+  /* ---------- 下拉：按风格填充专属封面方案 ---------- */
+  function variantsFor(theme) { return COVER_VARIANTS[theme] || []; }
+  function populateLayoutOptions(theme) {
+    const sel = $("imageLayout");
+    const prev = sel.value;
+    const list = variantsFor(theme);
+    sel.innerHTML = "";
+    list.forEach((v) => {
+      const o = document.createElement("option");
+      o.value = v.id; o.textContent = v.label;
+      sel.appendChild(o);
+    });
+    const noneO = document.createElement("option");
+    noneO.value = "none"; noneO.textContent = "封面无图";
+    sel.appendChild(noneO);
+    const hasPrev = Array.prototype.some.call(sel.options, (o) => o.value === prev);
+    sel.value = hasPrev ? prev : (list.length ? list[0].id : "none");
+  }
+
   /* ---------- 颜色工具 ---------- */
   function rgbToHsl(r, g, b) {
     r /= 255; g /= 255; b /= 255;
@@ -86,8 +147,6 @@
   }
 
   // 从图片提取主色调 → 生成 6:3:1 调色板
-  // 6（主色/大面积背景）与 3（辅助/文字）= 提取色同色相处理
-  // 1（点睛）= 提取色的相反色（补色）加对比度
   function extractPalette(img) {
     const w = 64, h = 64;
     const c = document.createElement("canvas");
@@ -109,7 +168,6 @@
     }));
     if (!arr.length) return null;
     arr.sort((a, b) => b.n - a.n);
-    // 主色调：在合理明度内选 饱和度 × 覆盖量 最高的颜色
     let base = null, best = -1;
     for (const c2 of arr) {
       const hsl = rgbToHsl(c2.r, c2.g, c2.b);
@@ -119,22 +177,16 @@
     }
     if (!base) base = arr[0];
     const [bh, bs0] = rgbToHsl(base.r, base.g, base.b);
-    const bs = clamp(bs0, 0.35, 0.8); // 保证足够色相表达
-
-    // 6：大面积浅色调背景（同色相）
+    const bs = clamp(bs0, 0.35, 0.8);
     const bg  = hslToHex(bh, Math.min(bs * 0.42, 0.22), 0.94);
     const bg2 = hslToHex(bh, Math.min(bs * 0.38, 0.18), 0.965);
-    // 3：辅助/文字（同色相加深加饱和，保证与 6 的对比）
     const ink = hslToHex(bh, Math.min(bs * 0.75, 0.5), 0.20);
     const dim = hslToHex(bh, Math.min(bs * 0.5, 0.35), 0.46);
     const rule = hslToHex(bh, Math.min(bs * 0.42, 0.3), 0.72);
-    // 1：点睛 = 补色（色相 +180°）加对比度
     const ch = bh + 0.5;
     const cs = clamp(bs0 * 1.3, 0.6, 0.92);
     const accent = hslToHex(ch, cs, 0.46);
-    const accentSoft = hslToHex(ch, Math.min(cs, 0.7), 0.6);
-
-    return { bg, bg2, ink, dim, rule, accent, accentSoft };
+    return { bg, bg2, ink, dim, rule, accent };
   }
 
   function ensureColors(url) {
@@ -176,18 +228,17 @@
     setSize();
 
     const theme = $("theme").value;
-    const choice = $("imageLayout").value;
     const imgUrl = $("imageUrl").value.trim();
     const isCover = index === 0;
 
-    let layout = "none";
-    if (isCover && imgUrl) {
-      layout = choice === "auto" ? (COVER_LAYOUT[theme] || "top") : choice;
-    }
-    const useImg = layout !== "none" && !!imgUrl && isCover;
+    const list = variantsFor(theme);
+    const variantId = $("imageLayout").value;
+    const variant = list.find((v) => v.id === variantId);
+    const base = variant ? variant.base : "none";
+    const useImg = base !== "none" && !!imgUrl && isCover;
 
     const cls = ["card", isCover ? "role-cover" : "role-body"];
-    if (useImg) { cls.push("has-img", "layout-" + layout); }
+    if (useImg) { cls.push("has-img", "layout-" + base, "cv-" + theme + "-" + variantId); }
     card.className = cls.join(" ");
     card.setAttribute("data-theme", theme);
 
@@ -207,13 +258,13 @@
     let inner;
     if (!useImg) {
       inner = eyebrowHtml + bodyHtml + footHtml;
-    } else if (layout === "module") {
+    } else if (base === "module") {
       inner = eyebrowHtml + `<div class="card-body">${media}${md}</div>` + footHtml;
-    } else if (layout === "frame") {
+    } else if (base === "frame") {
       inner = media + eyebrowHtml + bodyHtml + footHtml;
-    } else if (layout === "bg") {
+    } else if (base === "bg") {
       inner = media + `<div class="li-content"><div class="li-panel">${eyebrowHtml}${bodyHtml}</div>${footHtml}</div>`;
-    } else if (layout === "bottom") {
+    } else if (base === "bottom") {
       inner = `<div class="li-content">${eyebrowHtml}${bodyHtml}${footHtml}</div>` + media;
     } else {
       inner = media + `<div class="li-content">${eyebrowHtml}${bodyHtml}${footHtml}</div>`;
@@ -244,6 +295,11 @@
     } else {
       renderPage(keepIndex ? index : 0);
     }
+  }
+
+  function onThemeChange() {
+    populateLayoutOptions($("theme").value);
+    renderPage(index);
   }
 
   async function capture() {
@@ -286,7 +342,7 @@
   }
 
   input.addEventListener("input", () => rebuild(true));
-  $("theme").addEventListener("change", () => renderPage(index));
+  $("theme").addEventListener("change", onThemeChange);
   $("imageLayout").addEventListener("change", () => renderPage(index));
   $("imageUrl").addEventListener("input", () => refresh());
   $("autoColor").addEventListener("change", () => refresh());
@@ -299,6 +355,7 @@
   $("loadSample").addEventListener("click", () => { input.value = SAMPLE; rebuild(false); });
   window.addEventListener("resize", fit);
 
+  populateLayoutOptions($("theme").value);
   input.value = SAMPLE;
   rebuild(false);
 })();

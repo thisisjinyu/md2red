@@ -42,17 +42,8 @@
         </select>
       </label>
       <label class="field">
-        <span>封面配图</span>
-        <select id="imageLayout">
-          <option value="auto" selected>按风格自动</option>
-          <option value="none">封面无图</option>
-          <option value="top">顶部满幅出血</option>
-          <option value="frame">居中相框</option>
-          <option value="split">左右分栏</option>
-          <option value="bottom">底部锚定</option>
-          <option value="module">模块缩略图</option>
-          <option value="bg">满版背景 + 实色块</option>
-        </select>
+        <span>封面方案</span>
+        <select id="imageLayout"></select>
       </label>
       <label class="field">
         <span>图片地址</span>
@@ -82,7 +73,7 @@
         <button id="loadSample" class="btn btn-ghost">载入示例</button>
       </div>
       <textarea id="input" spellcheck="false" placeholder="在这里粘贴 Markdown，用 --- 分页"></textarea>
-      <p class="hint">用单独一行的 <code>---</code> 分页 · 支持 # 标题、**加粗**、*斜体*、&gt; 引用、- 列表、==高亮== · 配图仅作用于封面页（第一页），各风格有专属效果 · 勾选“图片取色”可根据图片主色自动配强调色</p>
+      <p class="hint">用单独一行的 <code>---</code> 分页 · 支持 # 标题、**加粗**、*斜体*、&gt; 引用、- 列表、==高亮== · 封面方案随风格切换，每种风格有专属版式（仅作用于第一页） · 勾选“图片取色”可按图片主色生成 6:3:1 配色</p>
     </section>
 
     <section class="preview-pane">
