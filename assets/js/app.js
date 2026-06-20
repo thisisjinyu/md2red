@@ -22,7 +22,7 @@
   let pages = [];
   let index = 0;
 
-  // 图片取色缓存：url -> { accent, dim, rule } | null(失败)
+  // 图片取色缓存：url -> 631 调色板 | null(失败)
   const colorCache = {};
 
   function splitPages(md) {
@@ -64,7 +64,9 @@
     }
     return [h, s, l];
   }
+  function clamp(x, lo, hi) { return Math.min(hi, Math.max(lo, x)); }
   function hslToHex(h, s, l) {
+    h = ((h % 1) + 1) % 1;
     let r, g, b;
     if (s === 0) { r = g = b = l; }
     else {
@@ -83,7 +85,9 @@
     return "#" + to(r) + to(g) + to(b);
   }
 
-  // 从图片提取调色板：主色调 accent + 柔和辅色 dim
+  // 从图片提取主色调 → 生成 6:3:1 调色板
+  // 6（主色/大面积背景）与 3（辅助/文字）= 提取色同色相处理
+  // 1（点睛）= 提取色的相反色（补色）加对比度
   function extractPalette(img) {
     const w = 64, h = 64;
     const c = document.createElement("canvas");
@@ -105,21 +109,32 @@
     }));
     if (!arr.length) return null;
     arr.sort((a, b) => b.n - a.n);
-    // accent：在合理明度内选 饱和度 × 覆盖量 最高的颜色
-    let accent = null, best = -1;
+    // 主色调：在合理明度内选 饱和度 × 覆盖量 最高的颜色
+    let base = null, best = -1;
     for (const c2 of arr) {
-      const [hh, ss, ll] = rgbToHsl(c2.r, c2.g, c2.b);
-      if (ll < 0.12 || ll > 0.9) continue;
-      const score = ss * Math.log(c2.n + 1);
-      if (score > best) { best = score; accent = c2; }
+      const hsl = rgbToHsl(c2.r, c2.g, c2.b);
+      if (hsl[2] < 0.12 || hsl[2] > 0.9) continue;
+      const score = hsl[1] * Math.log(c2.n + 1);
+      if (score > best) { best = score; base = c2; }
     }
-    if (!accent) accent = arr[0];
-    let [ah, as, al] = rgbToHsl(accent.r, accent.g, accent.b);
-    if (as < 0.28) as = 0.4;            // 保证一定鲜明度
-    const accentHex = hslToHex(ah, Math.min(as, 0.85), Math.min(0.6, Math.max(0.4, al)));
-    const dimHex = hslToHex(ah, Math.min(as * 0.5, 0.4), 0.55);
-    const ruleHex = hslToHex(ah, Math.min(as * 0.5, 0.4), 0.62);
-    return { accent: accentHex, dim: dimHex, rule: ruleHex };
+    if (!base) base = arr[0];
+    const [bh, bs0] = rgbToHsl(base.r, base.g, base.b);
+    const bs = clamp(bs0, 0.35, 0.8); // 保证足够色相表达
+
+    // 6：大面积浅色调背景（同色相）
+    const bg  = hslToHex(bh, Math.min(bs * 0.42, 0.22), 0.94);
+    const bg2 = hslToHex(bh, Math.min(bs * 0.38, 0.18), 0.965);
+    // 3：辅助/文字（同色相加深加饱和，保证与 6 的对比）
+    const ink = hslToHex(bh, Math.min(bs * 0.75, 0.5), 0.20);
+    const dim = hslToHex(bh, Math.min(bs * 0.5, 0.35), 0.46);
+    const rule = hslToHex(bh, Math.min(bs * 0.42, 0.3), 0.72);
+    // 1：点睛 = 补色（色相 +180°）加对比度
+    const ch = bh + 0.5;
+    const cs = clamp(bs0 * 1.3, 0.6, 0.92);
+    const accent = hslToHex(ch, cs, 0.46);
+    const accentSoft = hslToHex(ch, Math.min(cs, 0.7), 0.6);
+
+    return { bg, bg2, ink, dim, rule, accent, accentSoft };
   }
 
   function ensureColors(url) {
@@ -138,16 +153,20 @@
     });
   }
 
+  const PAL_VARS = ["--card-bg", "--card-bg-2", "--card-ink", "--card-dim", "--card-rule", "--card-accent"];
   function applyColorsToCard() {
     const on = $("autoColor").checked;
     const url = $("imageUrl").value.trim();
     const pal = on && url ? colorCache[url] : null;
     if (pal) {
-      card.style.setProperty("--card-accent", pal.accent);
+      card.style.setProperty("--card-bg", pal.bg);
+      card.style.setProperty("--card-bg-2", pal.bg2);
+      card.style.setProperty("--card-ink", pal.ink);
+      card.style.setProperty("--card-dim", pal.dim);
       card.style.setProperty("--card-rule", pal.rule);
+      card.style.setProperty("--card-accent", pal.accent);
     } else {
-      card.style.removeProperty("--card-accent");
-      card.style.removeProperty("--card-rule");
+      PAL_VARS.forEach((v) => card.style.removeProperty(v));
     }
   }
 
