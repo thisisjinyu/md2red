@@ -82,14 +82,14 @@
   .m3 .dg span{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.5);}
   .m3 .dg span.on{background:#fff;}
 
-  .cv-disc{position:absolute;top:-66px;right:-66px;width:520px;height:520px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;z-index:2;}
-  .cv-disc span{font-size:310px;font-weight:250;color:#fff;line-height:1;letter-spacing:-.05em;margin:-30px 36px 0 0;}
   .cv-ring{position:absolute;border-radius:50%;border:3px solid rgba(45,127,249,.32);z-index:0;}
   .cv-ring.a{top:-126px;right:-126px;width:640px;height:640px;}
   .cv-ring.b{top:-196px;right:-196px;width:780px;height:780px;}
+  .cv-ring.c{top:-58px;right:-58px;width:500px;height:500px;border-color:rgba(45,127,249,.22);}
   .cov-hd{grid-area:2/2/3/15;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--hair);}
-  .cv-t1{grid-area:11/2/13/13;display:flex;align-items:flex-end;font-size:84px;font-weight:250;letter-spacing:-.02em;line-height:1;}
-  .cv-t2{grid-area:13/2/15/13;display:flex;align-items:flex-end;font-size:84px;font-weight:250;letter-spacing:-.02em;line-height:1;}
+  .cv-t1{grid-area:11/2/13/14;display:flex;align-items:flex-end;font-size:84px;font-weight:250;letter-spacing:-.02em;line-height:1;}
+  .cv-t2{grid-area:13/2/15/14;display:flex;align-items:flex-end;font-size:84px;font-weight:250;letter-spacing:-.02em;line-height:1;}
+  .cv-t2 .d6{font-family:ui-monospace,'SF Mono','JetBrains Mono','Roboto Mono',Menlo,Consolas,monospace;font-size:134px;font-weight:400;color:var(--blue);line-height:.82;letter-spacing:-.04em;margin-right:.06em;}
   .cv-rule{grid-area:15/2/16/4;align-self:start;width:130px;height:8px;background:var(--blue);margin-top:8px;}
   .cv-sub{grid-area:16/2/18/11;font-size:34px;color:var(--ink2);line-height:1.55;}
   .cv-bf{grid-area:19/2/20/15;display:flex;align-items:center;justify-content:flex-end;border-top:2px solid var(--hair);font-size:26px;font-weight:500;color:var(--ink2);letter-spacing:.04em;}
@@ -109,17 +109,16 @@
   <div class='bar'>
     <div class='k'>md2red · DECK · HE-0001 · v3 模块网格版</div>
     <h1>改变人生的 6 个晨间仪式</h1>
-    <p>本轮两处修正：①页眉页脚还原成 card-base.css 的原始组件——页眉下边线回到 2px 发丝灰、eyebrow 回到蓝色 600、页脚字重回到 500；进度仍只用圆点（无页码）。②网格按 8pt 栅格规范加密：72px 主模块（=9×8pt）为粗线、24px 基线为细线，四边留 1 模块（72px），内容区 13 列×18 行。所有内容块用 CSS Grid 整数落格——蓝块 5列×10行、机制区 7列×5行、操作条 7列×4行、中间留 1 列装订沟。显示的网格是为了让你逐块核对边缘是否压线，最终版删 .card::before 即隐藏。</p>
+    <p>本轮修正：封面标题把「6」放回句子里（上一版误把数字抽到右上角，导致「改变人生的个晨间仪式」读不通），并把 6 本身放大为主视觉（字当图形）；右上角不再重复 6，改回同心圆环。页眉页脚仍为 card-base.css 原始组件；网格 72px 主模块（=9×8pt）+ 24px 基线，内容块整数落格，最终版删 .card::before 即隐藏。</p>
   </div>
   <div class='gallery'>
 
     <div class='frame'><div class='card'>
-      <div class='cv-ring b'></div><div class='cv-ring a'></div>
-      <div class='cv-disc'><span>6</span></div>
+      <div class='cv-ring b'></div><div class='cv-ring a'></div><div class='cv-ring c'></div>
       <div class='gd'>
         <div class='cov-hd'><span class='eyebrow'>HE-0001 · 晨间仪式</span><span class='cv-r'>向右滑 →</span></div>
         <div class='cv-t1'>改变人生的</div>
-        <div class='cv-t2'>个晨间仪式</div>
+        <div class='cv-t2'><span class='d6'>6</span>个晨间仪式</div>
         <div class='cv-rule'></div>
         <div class='cv-sub'>夜猫子也能变早起鸟。一套有科学支撑的早晨例程，能一口气拉高你的身体、情绪、体重和收入。</div>
         <div class='cv-bf'>@津玉不良言</div>
