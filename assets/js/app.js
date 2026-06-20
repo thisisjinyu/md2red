@@ -34,24 +34,48 @@
   }
 
   function escapeAttr(s) {
-    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
   }
 
   function renderPage(i) {
     const total = pages.length;
     index = Math.max(0, Math.min(i, total - 1));
     setSize();
-    card.setAttribute("data-theme", $("theme").value);
+
+    const theme = $("theme").value;
+    const layout = $("imageLayout").value;
+    const imgUrl = $("imageUrl").value.trim();
+    const useImg = !!imgUrl && layout !== "none";
+
+    card.className = "card" + (useImg ? ` has-img layout-${layout}` : "");
+    card.setAttribute("data-theme", theme);
 
     const eyebrow = $("eyebrow").value.trim();
     const brand = $("brand").value.trim();
     const no = String(index + 1).padStart(2, "0");
     const tot = String(total).padStart(2, "0");
 
-    card.innerHTML =
-      (eyebrow ? `<div class="card-eyebrow">${escapeAttr(eyebrow)}</div>` : "") +
-      `<div class="card-body">${window.mdToHtml(pages[index])}</div>` +
-      `<div class="card-foot"><span>${escapeAttr(brand)}</span><span class="page-no">${no} / ${tot}</span></div>`;
+    const eyebrowHtml = eyebrow ? `<div class="card-eyebrow">${escapeAttr(eyebrow)}</div>` : "";
+    const md = window.mdToHtml(pages[index]);
+    const footHtml = `<div class="card-foot"><span>${escapeAttr(brand)}</span><span class="page-no">${no} / ${tot}</span></div>`;
+    const media = useImg
+      ? `<div class="card-media"><img src="${escapeAttr(imgUrl)}" crossorigin="anonymous" alt="" /></div>`
+      : "";
+
+    let inner;
+    if (!useImg) {
+      inner = eyebrowHtml + `<div class="card-body">${md}</div>` + footHtml;
+    } else if (layout === "module") {
+      inner = eyebrowHtml + `<div class="card-body">${media}${md}</div>` + footHtml;
+    } else if (layout === "bg") {
+      inner = media + `<div class="li-content"><div class="li-panel">${eyebrowHtml}<div class="card-body">${md}</div></div>${footHtml}</div>`;
+    } else if (layout === "bottom") {
+      inner = `<div class="li-content">${eyebrowHtml}<div class="card-body">${md}</div>${footHtml}</div>` + media;
+    } else {
+      // top, split
+      inner = media + `<div class="li-content">${eyebrowHtml}<div class="card-body">${md}</div>${footHtml}</div>`;
+    }
+    card.innerHTML = inner;
 
     counter.textContent = `${no} / ${tot}`;
     fit();
@@ -96,7 +120,7 @@
     const start = index;
     for (let i = 0; i < total; i++) {
       renderPage(i);
-      await new Promise((r) => setTimeout(r, 80));
+      await new Promise((r) => setTimeout(r, 120));
       const canvas = await capture();
       download(canvas, `xhs-${String(i + 1).padStart(2, "0")}.png`);
       await new Promise((r) => setTimeout(r, 200));
@@ -106,6 +130,8 @@
 
   input.addEventListener("input", () => rebuild(true));
   $("theme").addEventListener("change", () => renderPage(index));
+  $("imageLayout").addEventListener("change", () => renderPage(index));
+  $("imageUrl").addEventListener("input", () => renderPage(index));
   $("eyebrow").addEventListener("input", () => renderPage(index));
   $("brand").addEventListener("input", () => renderPage(index));
   $("prev").addEventListener("click", () => renderPage(index - 1));

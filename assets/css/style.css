@@ -142,6 +142,62 @@ body {
 .card-foot .page-no { font-family: var(--font-serif); font-size: 26px; color: var(--card-ink); }
 
 /* ====================================================================
+   IMAGE LAYOUTS — 每张卡片的配图位置（下拉可选）
+   ==================================================================== */
+.card-media { overflow: hidden; background: #e9e6df; }
+.card-media img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 0; }
+
+/* 结构化版式接管画布时，隐藏装饰边框/角标 */
+.card.has-img:not(.layout-module)::before,
+.card.has-img:not(.layout-module)::after { display: none; }
+
+/* 结构化版式：取消卡片内边距，改由内容容器承担 */
+.card.has-img.layout-top,
+.card.has-img.layout-bottom,
+.card.has-img.layout-split,
+.card.has-img.layout-bg { padding: 0; }
+
+.li-content { display: flex; flex-direction: column; flex: 1; min-height: 0; padding: 84px 88px 72px; }
+.has-img .li-content .card-body { flex: 1; }
+.has-img .li-content .card-foot { position: static; left: auto; right: auto; bottom: auto; margin-top: 28px; }
+
+/* ① 顶部满幅出血 */
+.layout-top { display: flex; flex-direction: column; }
+.layout-top .card-media { width: 100%; height: 46%; flex: none; }
+
+/* ③ 底部锚定满幅 */
+.layout-bottom { display: flex; flex-direction: column; }
+.layout-bottom .card-media { width: 100%; height: 46%; flex: none; order: 2; }
+.layout-bottom .li-content { order: 1; }
+
+/* ② 左右分栏（非对称网格） */
+.layout-split { display: flex; flex-direction: row; }
+.layout-split .card-media { width: 45%; height: 100%; flex: none; }
+.layout-split .li-content { flex: 1; padding: 96px 72px 72px; }
+
+/* ④ 模块缩略图（图嵌入网格内浮动） */
+.layout-module .card-media { float: right; width: 340px; height: 340px; margin: 6px 0 24px 44px; }
+
+/* ⑤ 满版背景 + 实色文字块 */
+.layout-bg { position: relative; }
+.layout-bg .card-media { position: absolute; inset: 0; z-index: 0; }
+.layout-bg .li-content { position: relative; z-index: 1; justify-content: flex-end; }
+.layout-bg .li-panel { background: var(--card-accent); color: #fff; padding: 52px 52px 44px; }
+.layout-bg .li-panel .card-eyebrow,
+.layout-bg .li-panel .card-body h1,
+.layout-bg .li-panel .card-body h2,
+.layout-bg .li-panel .card-body h3,
+.layout-bg .li-panel .card-body h4,
+.layout-bg .li-panel .card-body p,
+.layout-bg .li-panel .card-body li,
+.layout-bg .li-panel .card-body blockquote { color: #fff; }
+.layout-bg .li-panel .card-eyebrow::after { background: rgba(255,255,255,0.5); }
+.layout-bg .li-panel .card-body ul li::before { background: #fff; }
+.layout-bg .li-panel .card-body blockquote { border-left-color: rgba(255,255,255,0.7); }
+.layout-bg .card-foot { color: rgba(255,255,255,0.92); border-top-color: rgba(255,255,255,0.4); }
+.layout-bg .card-foot .page-no { color: #fff; }
+
+/* ====================================================================
    THEMES — international design movements
    ==================================================================== */
 
@@ -178,6 +234,8 @@ body {
 .card[data-theme="swiss"] .card-eyebrow { color:#111; font-weight:700; }
 .card[data-theme="swiss"] .card-body h1 { font-weight:800; letter-spacing:-2px; }
 .card[data-theme="swiss"] .card-body h3 { color:#e2231a; }
+.card[data-theme="swiss"].layout-bg .li-panel { background:#e2231a; }
+.card[data-theme="swiss"] .card-media img { filter:grayscale(1) contrast(1.05); }
 
 /* 5. Bauhaus */
 .card[data-theme="bauhaus"] {
