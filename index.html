@@ -17,41 +17,37 @@
       <label class="field">
         <span>风格</span>
         <select id="theme">
-          <optgroup label="编辑 / 杂志">
+          <optgroup label="推荐 · 营养/健康/生活">
             <option value="gallery">画廊艺术 Gallery</option>
-            <option value="editorial">时尚杂志 Editorial</option>
             <option value="kinfolk">北欧极简 Kinfolk</option>
-          </optgroup>
-          <optgroup label="现代主义">
             <option value="swiss" selected>瑞士国际主义 Swiss</option>
+            <option value="editorial">时尚杂志 Editorial</option>
+            <option value="wabi">日式侘寂 Wabi-sabi</option>
+            <option value="aero">Frutiger Aero</option>
+            <option value="glass">玻璃拟态 Glassmorphism</option>
+          </optgroup>
+          <optgroup label="其他（已收起，仍可选）">
             <option value="bauhaus">包豪斯 Bauhaus</option>
             <option value="mondrian">蒙德里安 De Stijl</option>
             <option value="brutalism">粗野主义 Brutalism</option>
-          </optgroup>
-          <optgroup label="装饰 / 东方">
             <option value="artdeco">装饰艺术 Art Deco</option>
-            <option value="wabi">日式侘寂 Wabi-sabi</option>
-          </optgroup>
-          <optgroup label="复古 / 潮流">
             <option value="memphis">孟菲斯 Memphis</option>
             <option value="vaporwave">蒸汽波 Vaporwave</option>
             <option value="cyberpunk">赛博朋克 Cyberpunk</option>
             <option value="riso">丝网印刷 Risograph</option>
-          </optgroup>
-          <optgroup label="数字 / 实验">
             <option value="acid">酸性 Acid / Acidwave</option>
             <option value="y2k">Y2K 铬感</option>
-            <option value="aero">Frutiger Aero</option>
-            <option value="glass">玻璃拟态 Glassmorphism</option>
             <option value="anti">反设计 / 极繁 Anti-design</option>
           </optgroup>
         </select>
       </label>
       <label class="field">
-        <span>配图版式</span>
+        <span>封面配图</span>
         <select id="imageLayout">
-          <option value="none">无图</option>
-          <option value="top" selected>顶部满幅出血</option>
+          <option value="auto" selected>按风格自动</option>
+          <option value="none">封面无图</option>
+          <option value="top">顶部满幅出血</option>
+          <option value="frame">居中相框</option>
           <option value="split">左右分栏</option>
           <option value="bottom">底部锚定</option>
           <option value="module">模块缩略图</option>
@@ -60,7 +56,7 @@
       </label>
       <label class="field">
         <span>图片地址</span>
-        <input id="imageUrl" type="text" value="https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&amp;fit=crop&amp;w=1200&amp;q=80&amp;sat=-100" />
+        <input id="imageUrl" type="text" value="https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" />
       </label>
       <label class="field">
         <span>栏目</span>
@@ -82,7 +78,7 @@
         <button id="loadSample" class="btn btn-ghost">载入示例</button>
       </div>
       <textarea id="input" spellcheck="false" placeholder="在这里粘贴 Markdown，用 --- 分页"></textarea>
-      <p class="hint">用单独一行的 <code>---</code> 分页 · 支持 # 标题、**加粗**、*斜体*、&gt; 引用、- 列表、==高亮==、图片与链接 · 配图版式可在上方下拉切换</p>
+      <p class="hint">用单独一行的 <code>---</code> 分页 · 支持 # 标题、**加粗**、*斜体*、&gt; 引用、- 列表、==高亮== · 配图仅作用于封面页（第一页），各风格有专属效果</p>
     </section>
 
     <section class="preview-pane">

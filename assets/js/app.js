@@ -1,6 +1,15 @@
 (function () {
   const CARD = { w: 1080, h: 1440 }; // 固定 3:4 竖版
 
+  // 每个风格的封面配图默认版式（下拉选 auto 时生效）
+  const COVER_LAYOUT = {
+    gallery: "top", kinfolk: "top", swiss: "top", editorial: "frame", wabi: "module",
+    aero: "bg", glass: "bg",
+    bauhaus: "split", mondrian: "module", brutalism: "module", artdeco: "frame",
+    memphis: "none", vaporwave: "bg", cyberpunk: "bg", riso: "top",
+    acid: "bg", y2k: "none", anti: "none",
+  };
+
   const SAMPLE = `# 少吃一口糖\n你的身体会谢谢你\n\n> 真正的自律，不是和食物对抗，而是重新认识它。\n\n## 三个温柔的开始\n\n- 把含糖饮料换成**气泡水 + 柠檬**\n- 主食里掺一半**糙米与豆类**\n- 嘴馋时先喝一杯水，==等十分钟==\n\n---\n\n## 为什么有效\n\n血糖平稳了，*情绪和精力*也会跟着稳。\n\n1. 减少胰岛素的剧烈波动\n2. 延长饱腹感，自然少吃\n3. 让味觉慢慢变得敏锐\n\n> 改变不必剧烈，坚持才会发光。`;
 
   const $ = (id) => document.getElementById(id);
@@ -43,9 +52,15 @@
     setSize();
 
     const theme = $("theme").value;
-    const layout = $("imageLayout").value;
+    const choice = $("imageLayout").value;
     const imgUrl = $("imageUrl").value.trim();
-    const useImg = !!imgUrl && layout !== "none";
+    const isCover = index === 0;
+
+    let layout = "none";
+    if (isCover && imgUrl) {
+      layout = choice === "auto" ? (COVER_LAYOUT[theme] || "top") : choice;
+    }
+    const useImg = layout !== "none" && !!imgUrl && isCover;
 
     card.className = "card" + (useImg ? ` has-img layout-${layout}` : "");
     card.setAttribute("data-theme", theme);
@@ -57,6 +72,7 @@
 
     const eyebrowHtml = eyebrow ? `<div class="card-eyebrow">${escapeAttr(eyebrow)}</div>` : "";
     const md = window.mdToHtml(pages[index]);
+    const bodyHtml = `<div class="card-body">${md}</div>`;
     const footHtml = `<div class="card-foot"><span>${escapeAttr(brand)}</span><span class="page-no">${no} / ${tot}</span></div>`;
     const media = useImg
       ? `<div class="card-media"><img src="${escapeAttr(imgUrl)}" crossorigin="anonymous" alt="" /></div>`
@@ -64,16 +80,17 @@
 
     let inner;
     if (!useImg) {
-      inner = eyebrowHtml + `<div class="card-body">${md}</div>` + footHtml;
+      inner = eyebrowHtml + bodyHtml + footHtml;
     } else if (layout === "module") {
       inner = eyebrowHtml + `<div class="card-body">${media}${md}</div>` + footHtml;
+    } else if (layout === "frame") {
+      inner = media + eyebrowHtml + bodyHtml + footHtml;
     } else if (layout === "bg") {
-      inner = media + `<div class="li-content"><div class="li-panel">${eyebrowHtml}<div class="card-body">${md}</div></div>${footHtml}</div>`;
+      inner = media + `<div class="li-content"><div class="li-panel">${eyebrowHtml}${bodyHtml}</div>${footHtml}</div>`;
     } else if (layout === "bottom") {
-      inner = `<div class="li-content">${eyebrowHtml}<div class="card-body">${md}</div>${footHtml}</div>` + media;
+      inner = `<div class="li-content">${eyebrowHtml}${bodyHtml}${footHtml}</div>` + media;
     } else {
-      // top, split
-      inner = media + `<div class="li-content">${eyebrowHtml}<div class="card-body">${md}</div>${footHtml}</div>`;
+      inner = media + `<div class="li-content">${eyebrowHtml}${bodyHtml}${footHtml}</div>`;
     }
     card.innerHTML = inner;
 
@@ -90,12 +107,7 @@
     await (document.fonts ? document.fonts.ready : Promise.resolve());
     const prev = card.style.transform;
     card.style.transform = "none";
-    const canvas = await html2canvas(card, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: null,
-      logging: false,
-    });
+    const canvas = await html2canvas(card, { scale: 2, useCORS: true, backgroundColor: null, logging: false });
     card.style.transform = prev;
     fit();
     return canvas;

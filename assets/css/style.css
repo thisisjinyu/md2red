@@ -82,7 +82,7 @@ body {
 .counter { font-family: var(--font-serif); font-size: 15px; letter-spacing: 1px; min-width: 80px; text-align: center; }
 
 /* ====================================================================
-   CARD (exported artwork) — base layout, restyled per design movement
+   CARD (exported artwork)
    ==================================================================== */
 .card {
   --card-bg: #f6f1e7;
@@ -142,16 +142,15 @@ body {
 .card-foot .page-no { font-family: var(--font-serif); font-size: 26px; color: var(--card-ink); }
 
 /* ====================================================================
-   IMAGE LAYOUTS — 每张卡片的配图位置（下拉可选）
+   IMAGE LAYOUTS — 封面配图（按风格自动；下拉可覆盖）
    ==================================================================== */
-.card-media { overflow: hidden; background: #e9e6df; }
+.card-media { overflow: hidden; background: #e9e6df; position: relative; }
 .card-media img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 0; }
 
-/* 结构化版式接管画布时，隐藏装饰边框/角标 */
-.card.has-img:not(.layout-module)::before,
-.card.has-img:not(.layout-module)::after { display: none; }
+/* 满幅/分栏/背景版式接管画布时隐藏装饰；相框 frame 与模块 module 保留 */
+.card.has-img:not(.layout-module):not(.layout-frame)::before,
+.card.has-img:not(.layout-module):not(.layout-frame)::after { display: none; }
 
-/* 结构化版式：取消卡片内边距，改由内容容器承担 */
 .card.has-img.layout-top,
 .card.has-img.layout-bottom,
 .card.has-img.layout-split,
@@ -170,17 +169,21 @@ body {
 .layout-bottom .card-media { width: 100%; height: 46%; flex: none; order: 2; }
 .layout-bottom .li-content { order: 1; }
 
-/* ② 左右分栏（非对称网格） */
+/* ② 左右分栏 */
 .layout-split { display: flex; flex-direction: row; }
 .layout-split .card-media { width: 45%; height: 100%; flex: none; }
 .layout-split .li-content { flex: 1; padding: 96px 72px 72px; }
 
-/* ④ 模块缩略图（图嵌入网格内浮动） */
+/* ④ 模块缩略图（保留卡片内边距与装饰） */
 .layout-module .card-media { float: right; width: 340px; height: 340px; margin: 6px 0 24px 44px; }
 
-/* ⑤ 满版背景 + 实色文字块 */
+/* ⑥ 居中相框（保留卡片内边距与边框） */
+.layout-frame .card-media { width: 100%; height: 520px; flex: none; margin-bottom: 48px; }
+
+/* ⑤ 满版背景 + 实色块 */
 .layout-bg { position: relative; }
 .layout-bg .card-media { position: absolute; inset: 0; z-index: 0; }
+.layout-bg .card-media img { filter: brightness(0.72); }
 .layout-bg .li-content { position: relative; z-index: 1; justify-content: flex-end; }
 .layout-bg .li-panel { background: var(--card-accent); color: #fff; padding: 52px 52px 44px; }
 .layout-bg .li-panel .card-eyebrow,
@@ -200,11 +203,8 @@ body {
 /* ====================================================================
    THEMES — international design movements
    ==================================================================== */
-
-/* 1. Gallery art (default) */
 .card[data-theme="gallery"] { --card-bg:#f6f1e7; --card-ink:#1c1a16; --card-dim:#6c6354; --card-accent:#c8553d; --card-rule:rgba(28,26,22,0.16); }
 
-/* 2. Editorial / fashion magazine (Vogue-like) */
 .card[data-theme="editorial"] {
   --card-bg:#ffffff; --card-ink:#141414; --card-dim:#8a8a8a; --card-accent:#141414; --card-rule:rgba(0,0,0,0.14);
   --font-serif:"Playfair Display","Noto Serif SC",serif; --font-cjk:"Noto Serif SC",serif; text-align:center;
@@ -215,7 +215,6 @@ body {
 .card[data-theme="editorial"] .card-body h1 { font-style:italic; font-weight:500; font-size:108px; }
 .card[data-theme="editorial"] .card-foot { justify-content:center; gap:24px; }
 
-/* 3. Kinfolk / Scandinavian minimal */
 .card[data-theme="kinfolk"] {
   --card-bg:#e9e4da; --card-ink:#46433c; --card-dim:#9a958a; --card-accent:#7d7768; --card-rule:rgba(70,67,60,0.18);
   --font-serif:"Noto Serif SC",Georgia,serif; --font-cjk:"Noto Sans SC",sans-serif;
@@ -225,7 +224,6 @@ body {
 .card[data-theme="kinfolk"] .card-body h1 { font-weight:400; font-size:74px; letter-spacing:1px; }
 .card[data-theme="kinfolk"] .card-body p, .card[data-theme="kinfolk"] .card-body li { font-weight:300; }
 
-/* 4. Swiss / International Typographic Style */
 .card[data-theme="swiss"] {
   --card-bg:#ffffff; --card-ink:#111111; --card-dim:#666666; --card-accent:#e2231a; --card-rule:#111111;
   --font-serif:"Helvetica Neue",Arial,"Noto Sans SC",sans-serif; --font-cjk:"Helvetica Neue",Arial,"Noto Sans SC",sans-serif;
@@ -234,10 +232,7 @@ body {
 .card[data-theme="swiss"] .card-eyebrow { color:#111; font-weight:700; }
 .card[data-theme="swiss"] .card-body h1 { font-weight:800; letter-spacing:-2px; }
 .card[data-theme="swiss"] .card-body h3 { color:#e2231a; }
-.card[data-theme="swiss"].layout-bg .li-panel { background:#e2231a; }
-.card[data-theme="swiss"] .card-media img { filter:grayscale(1) contrast(1.05); }
 
-/* 5. Bauhaus */
 .card[data-theme="bauhaus"] {
   --card-bg:#f3ecd8; --card-ink:#1a1a1a; --card-dim:#5b5647; --card-accent:#d7263d; --card-rule:rgba(26,26,26,0.22);
   --font-serif:"Futura","Century Gothic",Arial,sans-serif; --font-cjk:"Century Gothic",Arial,"Noto Sans SC",sans-serif;
@@ -246,7 +241,6 @@ body {
 .card[data-theme="bauhaus"]::after { content:""; position:absolute; right:78px; top:150px; width:110px; height:110px; border-radius:50%; background:#f4b400; }
 .card[data-theme="bauhaus"] .card-eyebrow { color:#0b5cab; }
 
-/* 6. De Stijl / Mondrian */
 .card[data-theme="mondrian"] {
   --card-bg:#f7f5ef; --card-ink:#111111; --card-dim:#555555; --card-accent:#d4151b; --card-rule:#111111;
   --font-serif:"Helvetica Neue",Arial,sans-serif; --font-cjk:Arial,"Noto Sans SC",sans-serif;
@@ -255,7 +249,6 @@ body {
 .card[data-theme="mondrian"]::after { content:""; position:absolute; top:0; right:0; width:210px; height:210px; background:#d4151b; border-left:16px solid #111; border-bottom:16px solid #111; }
 .card[data-theme="mondrian"] .card-body h1 { font-weight:800; text-transform:uppercase; }
 
-/* 7. Brutalism (web brutalist) */
 .card[data-theme="brutalism"] {
   --card-bg:#ffffff; --card-ink:#000000; --card-dim:#000000; --card-accent:#000000; --card-rule:#000000;
   --font-serif:"Courier New",monospace; --font-cjk:"Courier New",monospace;
@@ -267,7 +260,6 @@ body {
 .card[data-theme="brutalism"] .card-body blockquote { border-left-width:9px; font-style:normal; }
 .card[data-theme="brutalism"] .card-foot { border-top:4px solid #000; }
 
-/* 8. Art Deco */
 .card[data-theme="artdeco"] {
   --card-bg:#10171a; --card-ink:#f0e6cf; --card-dim:#b39b6e; --card-accent:#caa45a; --card-rule:rgba(202,164,90,0.5);
   --font-serif:"Playfair Display","Noto Serif SC",serif; --font-cjk:"Noto Serif SC",serif; text-align:center;
@@ -278,7 +270,6 @@ body {
 .card[data-theme="artdeco"] .card-body h3 { color:var(--card-accent); }
 .card[data-theme="artdeco"] .card-foot { justify-content:center; gap:24px; }
 
-/* 9. Japanese Wabi-sabi */
 .card[data-theme="wabi"] {
   --card-bg:#e6dfd0; --card-ink:#2d2823; --card-dim:#8a7f6c; --card-accent:#9c4a35; --card-rule:rgba(45,40,35,0.2);
   --font-serif:"Noto Serif SC",serif; --font-cjk:"Noto Serif SC",serif;
@@ -287,7 +278,6 @@ body {
 .card[data-theme="wabi"]::after { content:"印"; position:absolute; right:72px; top:150px; width:64px; height:64px; background:#9c4a35; color:#f3ece0; display:flex; align-items:center; justify-content:center; font-size:30px; border-radius:4px; }
 .card[data-theme="wabi"] .card-body h1 { font-weight:600; }
 
-/* 10. Memphis */
 .card[data-theme="memphis"] {
   --card-bg:#fbf3e4; --card-ink:#2b2b2b; --card-dim:#6f6a64; --card-accent:#ff5d8f; --card-rule:rgba(43,43,43,0.2);
   --font-serif:"Arial Black",Arial,sans-serif; --font-cjk:Arial,"Noto Sans SC",sans-serif;
@@ -302,7 +292,6 @@ body {
 .card[data-theme="memphis"] .card-body h1 { color:#ff5d8f; text-transform:uppercase; }
 .card[data-theme="memphis"] .card-body h3 { color:#0b5cab; }
 
-/* 11. Vaporwave */
 .card[data-theme="vaporwave"] {
   --card-bg:#2b1055; --card-ink:#fdf4ff; --card-dim:#c9a9ff; --card-accent:#ff71ce; --card-rule:rgba(255,113,206,0.5);
   --font-serif:"Arial Black",Arial,sans-serif; --font-cjk:Arial,"Noto Sans SC",sans-serif;
@@ -313,7 +302,6 @@ body {
 .card[data-theme="vaporwave"] .card-body h1 { color:#fff; text-shadow:0 0 18px #ff71ce, 0 0 4px #05d9e8; letter-spacing:2px; }
 .card[data-theme="vaporwave"] .card-body h3 { color:#05d9e8; }
 
-/* 12. Cyberpunk / neon */
 .card[data-theme="cyberpunk"] {
   --card-bg:#0a0a12; --card-ink:#d6faff; --card-dim:#6ad7e5; --card-accent:#ff003c; --card-rule:rgba(0,255,213,0.35);
   --font-serif:"Arial Black",Arial,sans-serif; --font-cjk:Arial,"Noto Sans SC",sans-serif;
@@ -323,7 +311,6 @@ body {
 .card[data-theme="cyberpunk"] .card-body h1 { color:#fff; text-shadow:3px 0 #ff003c, -3px 0 #00ffd5; }
 .card[data-theme="cyberpunk"] .card-body h3 { color:#00ffd5; }
 
-/* 13. Risograph */
 .card[data-theme="riso"] {
   --card-bg:#f4efe0; --card-ink:#2a2a73; --card-dim:#6b6bb0; --card-accent:#ff4f6d; --card-rule:rgba(42,42,115,0.3);
   --font-serif:"Arial Black",Arial,sans-serif; --font-cjk:Arial,"Noto Sans SC",sans-serif;
@@ -339,8 +326,6 @@ body {
 /* ====================================================================
    THEMES — contemporary digital / experimental aesthetics
    ==================================================================== */
-
-/* 14. Acid / Acidwave (酸性) — holographic laser + neon glow */
 .card[data-theme="acid"] {
   --card-bg:#07070c; --card-ink:#f4f0ff; --card-dim:#b3a6e6; --card-accent:#c6ff00; --card-rule:rgba(255,255,255,0.18);
   --font-serif:"Arial Black",Arial,sans-serif; --font-cjk:Arial,"Noto Sans SC",sans-serif;
@@ -355,7 +340,6 @@ body {
 .card[data-theme="acid"] .card-body h3 { color:#c6ff00; }
 .card[data-theme="acid"] .card-body blockquote { color:#d8ccff; }
 
-/* 15. Y2K chrome (铬感) — millennium silver + bubbly */
 .card[data-theme="y2k"] {
   --card-bg:#dfe9f5; --card-ink:#1b2433; --card-dim:#5a6b85; --card-accent:#ff43a4; --card-rule:rgba(27,36,51,0.18);
   --font-serif:"Arial Black",Arial,sans-serif; --font-cjk:Arial,"Noto Sans SC",sans-serif;
@@ -366,7 +350,6 @@ body {
 .card[data-theme="y2k"] .card-body h1 { color:#aab6c8; letter-spacing:-1px; text-shadow:0 2px 0 #fff, 0 4px 8px rgba(0,0,0,0.25), 0 -1px 0 #6b7a93; }
 .card[data-theme="y2k"] .card-body h3 { color:#2aa7ff; }
 
-/* 16. Frutiger Aero — glossy aqua/green, fresh tech */
 .card[data-theme="aero"] {
   --card-bg:#bdeaff; --card-ink:#0f3b3a; --card-dim:#3f6f63; --card-accent:#00a86b; --card-rule:rgba(15,59,58,0.18);
   --font-serif:"Helvetica Neue",Arial,sans-serif; --font-cjk:Arial,"Noto Sans SC",sans-serif;
@@ -377,7 +360,6 @@ body {
 .card[data-theme="aero"] .card-body h1 { color:#0f5a3a; text-shadow:0 1px 0 rgba(255,255,255,0.85); }
 .card[data-theme="aero"] .card-body h3 { color:#0a8acb; }
 
-/* 17. Glassmorphism (玻璃拟态) — frosted panel over gradient */
 .card[data-theme="glass"] {
   --card-bg:#5b6cff; --card-ink:#ffffff; --card-dim:#e6e8ff; --card-accent:#ffffff; --card-rule:rgba(255,255,255,0.4);
   --font-serif:"Helvetica Neue",Arial,"Noto Sans SC",sans-serif; --font-cjk:"Noto Sans SC",sans-serif;
@@ -398,7 +380,6 @@ body {
 .card[data-theme="glass"] .card-foot { color:rgba(255,255,255,0.85); }
 .card[data-theme="glass"] .card-foot .page-no { color:#fff; }
 
-/* 18. Anti-design / Maximalism (反设计 / 极繁) — clashing, chaotic */
 .card[data-theme="anti"] {
   --card-bg:#c6ff3a; --card-ink:#101010; --card-dim:#444444; --card-accent:#ff2e63; --card-rule:#101010;
   --font-serif:"Times New Roman",Georgia,serif; --font-cjk:"Noto Sans SC",sans-serif;
@@ -412,6 +393,75 @@ body {
 .card[data-theme="anti"] .card-body h3 { color:#101010; background:#ffe600; display:inline; padding:2px 8px; }
 .card[data-theme="anti"] .card-body blockquote { background:#ff2e63; color:#fff; border-left:none; padding:20px; font-style:normal; font-family:"Courier New",monospace; }
 .card[data-theme="anti"] .card-body mark { background:#00e5ff; }
+
+/* ====================================================================
+   PER-THEME COVER IMAGE TREATMENTS — 每个风格专属的封面配图效果
+   ==================================================================== */
+
+/* Swiss — 顶部满幅黑白高对比 */
+.card[data-theme="swiss"] .card-media img { filter:grayscale(1) contrast(1.06); }
+.card[data-theme="swiss"].layout-bg .li-panel { background:#e2231a; }
+
+/* Gallery — 暖调全幅艺术 */
+.card[data-theme="gallery"] .card-media img { filter:saturate(1.03) contrast(1.02); }
+
+/* Kinfolk — 柔和小图 + 大留白 */
+.card[data-theme="kinfolk"].layout-top .card-media { height:40%; }
+.card[data-theme="kinfolk"] .card-media img { filter:saturate(0.9) brightness(1.03); }
+
+/* Editorial — 居中黑白相框 */
+.card[data-theme="editorial"] .card-media img { filter:grayscale(1) contrast(1.03); }
+.card[data-theme="editorial"].layout-frame .card-media { height:560px; }
+
+/* Wabi-sabi — 偏置小图、柔和留白 */
+.card[data-theme="wabi"].layout-module .card-media { width:300px; height:380px; margin:0 0 24px 44px; }
+.card[data-theme="wabi"] .card-media img { filter:saturate(0.9) brightness(1.02); }
+
+/* Frutiger Aero — 光泽背景 + 半透明白玻璃块 */
+.card[data-theme="aero"].layout-bg .card-media img { filter:brightness(0.92) saturate(1.06); }
+.card[data-theme="aero"].layout-bg .li-panel { background:rgba(255,255,255,0.24); border:1px solid rgba(255,255,255,0.6); backdrop-filter:blur(8px); }
+.card[data-theme="aero"].layout-bg .li-panel .card-eyebrow { color:#00a86b; }
+.card[data-theme="aero"].layout-bg .li-panel .card-body h1,
+.card[data-theme="aero"].layout-bg .li-panel .card-body h2,
+.card[data-theme="aero"].layout-bg .li-panel .card-body h3,
+.card[data-theme="aero"].layout-bg .li-panel .card-body h4,
+.card[data-theme="aero"].layout-bg .li-panel .card-body p,
+.card[data-theme="aero"].layout-bg .li-panel .card-body li,
+.card[data-theme="aero"].layout-bg .li-panel .card-body blockquote { color:#0f3b3a; }
+.card[data-theme="aero"].layout-bg .card-foot { color:#0f3b3a; border-top-color:rgba(15,59,58,0.35); }
+.card[data-theme="aero"].layout-bg .card-foot .page-no { color:#0f3b3a; }
+
+/* Glassmorphism — 图在毛玻璃面板之下 */
+.card[data-theme="glass"].layout-bg .card-media img { filter:brightness(0.86) saturate(1.05); }
+.card[data-theme="glass"].layout-bg .li-panel {
+  background:rgba(255,255,255,0.16); border:1px solid rgba(255,255,255,0.5);
+  border-radius:32px; backdrop-filter:blur(16px);
+  box-shadow:0 20px 60px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.6);
+}
+.card[data-theme="glass"].layout-bg .card-body { background:none; border:none; box-shadow:none; padding:0; }
+
+/* Bauhaus — 几何分栏 */
+.card[data-theme="bauhaus"].layout-split .card-media { width:42%; }
+.card[data-theme="bauhaus"] .card-media img { filter:contrast(1.05); }
+
+/* Mondrian — 重描边方块 */
+.card[data-theme="mondrian"].layout-module .card-media { width:360px; height:360px; border:12px solid #111; margin:0 0 24px 44px; }
+
+/* Brutalism — 原始粗框方块 */
+.card[data-theme="brutalism"].layout-module .card-media { width:360px; height:360px; border:6px solid #000; filter:grayscale(1) contrast(1.1); }
+
+/* Art Deco — 金边居中相框 */
+.card[data-theme="artdeco"].layout-frame .card-media { height:520px; border:2px solid var(--card-accent); box-shadow:inset 0 0 0 6px rgba(202,164,90,0.18); }
+.card[data-theme="artdeco"] .card-media img { filter:sepia(0.12) contrast(1.02); }
+
+/* Risograph — 粉色双调 */
+.card[data-theme="riso"] .card-media { background:#ff4f6d; }
+.card[data-theme="riso"] .card-media img { filter:grayscale(1) contrast(1.12); opacity:0.88; }
+
+/* Vaporwave / Cyberpunk / Acid — 霿虹背景 + 深色面板 */
+.card[data-theme="vaporwave"].layout-bg .li-panel { background:rgba(43,16,85,0.8); }
+.card[data-theme="cyberpunk"].layout-bg .li-panel { background:rgba(10,10,18,0.82); border:1px solid #00ffd5; }
+.card[data-theme="acid"].layout-bg .li-panel { background:rgba(7,7,12,0.78); border:1px solid rgba(255,255,255,0.18); }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
