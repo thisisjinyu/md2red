@@ -90,8 +90,8 @@
     ],
   };
 
-  // 示例：第一页为专门的封面（主标题 / 副标题 / 描述），后续为正文
-  const SAMPLE = `# 少吃一口糖，身体会谢谢你\n## 21 天温和减糖计划\n不靠硬扑，而是重新认识食物。三个不费力的小改变，从今天开始。\n\n---\n\n## 三个温柔的开始\n\n- 把含糖饮料换成**气泡水 + 柠檬**\n- 主食里掺一半**糙米与豆类**\n- 嘴馋时先喝一杯水，==等十分钟==\n\n---\n\n## 为什么有效\n\n血糖平稳了，*情绪和精力*也会跟着稳。\n\n1. 减少胰岛素的剧烈波动\n2. 延长饱腹感，自然少吃\n3. 让味觉慢慢变得敏锐\n\n> 改变不必剧烈，坚持才会发光。`;
+  // 示例：首页=封面（主标题/副标题/描述），中间=正文，末页=尾页（收尾/行动号召）
+  const SAMPLE = `# 少吃一口糖，身体会谢谢你\n## 21 天温和减糖计划\n不靠硬扛，而是重新认识食物。三个不费力的小改变，从今天开始。\n\n---\n\n## 三个温柔的开始\n\n- 把含糖饮料换成**气泡水 + 柠檬**\n- 主食里掺一半**糙米与豆类**\n- 嘴馋时先喝一杯水，==等十分钟==\n\n---\n\n## 为什么有效\n\n血糖平稳了，*情绪和精力*也会跟着稳。\n\n1. 减少胰岛素的剧烈波动\n2. 延长饱腹感，自然少吃\n3. 让味觉慢慢变得敏锐\n\n> 改变不必剧烈，坚持才会发光。\n\n---\n\n# 从今天开始\n## 给身体多一点温柔\n少吃一口糖，不是剥夺，而是更懂得照顾自己。\n\n如果这份计划帮到你，点亮**收藏**，明天接着看。\n\n> 关注 · 一起慢慢变好`;
 
   const $ = (id) => document.getElementById(id);
   const input = $("input");
@@ -266,6 +266,7 @@
     const theme = $("theme").value;
     const imgUrl = $("imageUrl").value.trim();
     const isCover = index === 0;
+    const isEnd = total > 1 && index === total - 1;
     const noImg = $("noImage").checked;
 
     const list = variantsFor(theme);
@@ -278,7 +279,10 @@
     $("imageLayout").disabled = noImg || list.length === 0;
     $("imageUrl").disabled = noImg;
 
-    const cls = ["card", isCover ? "role-cover" : "role-body"];
+    const cls = ["card"];
+    if (isCover) cls.push("role-cover");
+    else if (isEnd) cls.push("role-body", "role-end");
+    else cls.push("role-body");
     if (useImg) { cls.push("has-img", "layout-" + base, "cv-" + theme + "-" + variantId); }
     card.className = cls.join(" ");
     card.setAttribute("data-theme", theme);
