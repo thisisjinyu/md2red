@@ -108,7 +108,7 @@
   };
 
   // 示例：首页=封面（主标题/副标题/描述），中间=正文（无图→展示大序号锁点），末页=尾页
-  const SAMPLE = `# 少吃一口糖，身体会谢谢你\n## 21 天温和减糖计划\n不靠硬扑，而是重新认识食物。三个不费力的小改变，从今天开始。\n\n---\n\n## 三个温柔的开始\n\n- 把含糖饮料换成**气泡水 + 柠檬**\n- 主食里泥一半**糙米与豆类**\n- 嘴馋时先喝一杯水，==等十分钟==\n\n---\n\n## 为什么有效\n\n血糖平稳了，*情绪和精力*也会跟着稳。\n\n1. 减少胰岛素的剧烈波动\n2. 延长饱腹感，自然少吃\n3. 让味觉慢慢变得敏锐\n\n> 改变不必剧烈，坚持才会发光。\n\n---\n\n# 从今天开始\n## 给身体多一点温柔\n少吃一口糖，不是剥夺，而是更懂得照顾自己。\n\n如果这份计划帮到你，点亮**收藏**，明天接着看。\n\n> 关注 · 一起慢慢变好`;
+  const SAMPLE = `# 少吃一口糖，身体会谢谢你\n## 21 天温和减糖计划\n不靠硬扑，而是重新认识食物。三个不费力的小改变，从今天开始。\n\n---\n\n## 三个温柔的开始\n\n- 把含糖饮料换成**气泡水 + 柠檬**\n- 主食里泥一半**糥米与豆类**\n- 嘴馅时先喝一杯水，==等十分钟==\n\n---\n\n## 为什么有效\n\n血糖平稳了，*情绪和精力*也会跟着稳。\n\n1. 减少胰岛素的剧烈波动\n2. 延长饱腹感，自然少吃\n3. 让味觉慢慢变得敏锐\n\n> 改变不必剧烈，坚持才会发光。\n\n---\n\n# 从今天开始\n## 给身体多一点温柔\n少吃一口糖，不是剥夺，而是更懂得照顾自己。\n\n如果这份计划帮到你，点亮**收藏**，明天接着看。\n\n> 关注 · 一起慢慢变好`;
 
   const $ = (id) => document.getElementById(id);
   const input = $("input");
@@ -122,6 +122,13 @@
 
   // 图片取色缓存：url -> 631 调色板 | null(失败)
   const colorCache = {};
+
+  // 预览缩放比例（屏幕像素 → 卡片像素换算用）
+  let fitScale = 1;
+  // 正文图片的缩放/位移状态：页索引 -> { scale, x, y }（每页独立）
+  const imgXform = {};
+  // 当前拖拽会话
+  let drag = null;
 
   function splitPages(md) {
     const parts = md.split(/^\s*---\s*$/m).map((s) => s.trim()).filter(Boolean);
@@ -138,6 +145,7 @@
     const availW = stage.clientWidth - pad;
     const availH = stage.clientHeight - pad;
     const scale = Math.min(availW / CARD.w, availH / CARD.h, 1);
+    fitScale = scale;
     card.style.transform = `scale(${scale})`;
     frame.style.width = CARD.w * scale + "px";
     frame.style.height = CARD.h * scale + "px";
@@ -145,6 +153,55 @@
 
   function escapeAttr(s) {
     return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
+  }
+
+  /* ---------- 正文图片：固定图框 + 框内拖拽缩放 ---------- */
+  // 抽出正文末尾的图片（最后一个含 img 的 figure），余下作为文字
+  function splitTrailingFigure(md) {
+    const tmp = document.createElement("div");
+    tmp.innerHTML = md;
+    const figs = tmp.querySelectorAll("figure");
+    let fig = null;
+    for (let i = figs.length - 1; i >= 0; i--) {
+      if (figs[i].querySelector("img")) { fig = figs[i]; break; }
+    }
+    if (!fig) return { textHtml: md, imgHtml: "" };
+    const img = fig.querySelector("img");
+    const imgHtml = img ? img.outerHTML : "";
+    fig.remove();
+    return { textHtml: tmp.innerHTML, imgHtml };
+  }
+
+  // 应用缩放/位移，并钕制边界（缩放=1 不可平移；放大后平移不露白）
+  function applyXform(box, img, st) {
+    const bw = box.clientWidth, bh = box.clientHeight;
+    const maxX = bw * (st.scale - 1) / 2;
+    const maxY = bh * (st.scale - 1) / 2;
+    st.x = Math.max(-maxX, Math.min(maxX, st.x));
+    st.y = Math.max(-maxY, Math.min(maxY, st.y));
+    img.style.transform = `translate(${st.x}px, ${st.y}px) scale(${st.scale})`;
+  }
+
+  // 为当前页的图框绑定拖拽平移 + 滚轮缩放（状态按页独立）
+  function setupBodyFigure(idx) {
+    const box = card.querySelector(".body-figure");
+    if (!box) return;
+    const img = box.querySelector("img");
+    if (!img) return;
+    const st = imgXform[idx] || (imgXform[idx] = { scale: 1, x: 0, y: 0 });
+    const reapply = () => applyXform(box, img, st);
+    reapply();
+    if (!img.complete) img.addEventListener("load", reapply, { once: true });
+    box.addEventListener("mousedown", (e) => {
+      drag = { st, box, img, sx: e.clientX, sy: e.clientY, ox: st.x, oy: st.y };
+      e.preventDefault();
+    });
+    box.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      const f = e.deltaY < 0 ? 1.06 : 1 / 1.06;
+      st.scale = Math.max(1, Math.min(5, st.scale * f));
+      applyXform(box, img, st);
+    }, { passive: false });
   }
 
   /* ---------- 下拉：按风格填充专属封面方案 ---------- */
@@ -330,7 +387,8 @@
 
     // 提前渲染正文 HTML，以便判断正文页是否含图
     const md = window.mdToHtml(pages[index]);
-    const hasBodyFig = isBody && /<img/i.test(md);
+    const bodyFig = isBody ? splitTrailingFigure(md) : null;
+    const hasBodyFig = !!(bodyFig && bodyFig.imgHtml);
 
     // 同步控件可用状态：无图时禁用方案/地址
     $("imageLayout").disabled = noImg || list.length === 0;
@@ -360,7 +418,10 @@
     const headHtml = isBody
       ? `<div class="card-head">${eyebrowHtml}${progressHtml}</div>`
       : eyebrowHtml;
-    const bodyHtml = `<div class="card-body">${md}</div>`;
+    const bodyInner = hasBodyFig
+      ? `<div class="body-text">${bodyFig.textHtml}</div><div class="body-figure">${bodyFig.imgHtml}</div>`
+      : md;
+    const bodyHtml = `<div class="card-body">${bodyInner}</div>`;
     const footHtml = `<div class="card-foot"><span class="card-brand">${escapeAttr(brand)}</span></div>`;
     // 无图正文页：底部大序号锁点，消费下方留白
     const anchorHtml = (isBody && !hasBodyFig)
@@ -387,6 +448,7 @@
     }
     card.innerHTML = inner + anchorHtml + buildGrid(theme, base);
     applyColorsToCard();
+    if (hasBodyFig) setupBodyFigure(index);
 
     counter.textContent = `${no} / ${tot}`;
     fit();
@@ -474,6 +536,16 @@
   $("exportAll").addEventListener("click", exportAll);
   $("loadSample").addEventListener("click", () => { input.value = SAMPLE; rebuild(false); });
   window.addEventListener("resize", fit);
+
+  // 图框内拖拽平移：全局监听一次，避免重复绑定
+  document.addEventListener("mousemove", (e) => {
+    if (!drag) return;
+    const k = fitScale || 1;
+    drag.st.x = drag.ox + (e.clientX - drag.sx) / k;
+    drag.st.y = drag.oy + (e.clientY - drag.sy) / k;
+    applyXform(drag.box, drag.img, drag.st);
+  });
+  document.addEventListener("mouseup", () => { drag = null; });
 
   populateLayoutOptions($("theme").value);
   input.value = SAMPLE;
