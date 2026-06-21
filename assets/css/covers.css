@@ -325,6 +325,9 @@
 }
 .card.role-body.bf::before { display:none; }
 .card.role-body.bf .card-body { display:flex; flex-direction:column; }
+/* flex 纵向下外边距不再折叠（间距会相加翻倍）：清零各元素上外边距，
+   间距统一由下外边距决定，使有图版与无图版节奏一致；图片 auto 边距保留 */
+.card.role-body.bf .card-body > *:not(figure) { margin-top:0; }
 .card.role-body.bf .card-body figure.card-fig.fig-band:last-child { margin:auto -88px 0; flex:none; }
 .card.role-body.bf .card-body figure.card-fig.fig-band:last-child img { height:540px; object-fit:cover; border-radius:0; box-shadow:none; }
 
