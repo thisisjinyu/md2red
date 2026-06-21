@@ -123,7 +123,7 @@ body {
 
 /* ---------- 页眉栏：栏目 + 页码进度（右上角） ---------- */
 .card-head { display: flex; align-items: center; gap: 28px; margin-bottom: 40px; }
-.card .card-head .card-eyebrow { flex: 1; margin-bottom: 0; }
+.card .card-head .card-eyebrow { flex: 1; margin-bottom: 0; line-height: 1; }
 .card-progress { flex: none; display: flex; align-items: center; gap: 9px; line-height: 1; }
 .card-progress .pg { color: var(--card-dim); opacity: 0.6; display: inline-flex; align-items: center; justify-content: center; }
 .card-progress .pg.active { color: var(--card-accent); opacity: 1; }
