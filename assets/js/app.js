@@ -64,7 +64,7 @@
       { id: "band", label: "撞色顶图", base: "top" },
     ],
     vaporwave: [
-      { id: "neon", label: "满版霓虹", base: "bg" },
+      { id: "neon", label: "满版霍虹", base: "bg" },
       { id: "glitchtop", label: "故障顶图", base: "top" },
     ],
     cyberpunk: [
@@ -108,7 +108,7 @@
   };
 
   // 示例：首页=封面（主标题/副标题/描述），中间=正文（无图→展示大序号锁点），末页=尾页
-  const SAMPLE = `# 少吃一口糖，身体会谢谢你\n## 21 天温和减糖计划\n不靠硬扛，而是重新认识食物。三个不费力的小改变，从今天开始。\n\n---\n\n## 三个温柔的开始\n\n- 把含糖饮料换成**气泡水 + 柠檬**\n- 主食里掺一半**糙米与豆类**\n- 嘴馋时先喝一杯水，==等十分钟==\n\n---\n\n## 为什么有效\n\n血糖平稳了，*情绪和精力*也会跟着稳。\n\n1. 减少胰岛素的剧烈波动\n2. 延长饱腹感，自然少吃\n3. 让味觉慢慢变得敏锐\n\n> 改变不必剧烈，坚持才会发光。\n\n---\n\n# 从今天开始\n## 给身体多一点温柔\n少吃一口糖，不是剥夺，而是更懂得照顾自己。\n\n如果这份计划帮到你，点亮**收藏**，明天接着看。\n\n> 关注 · 一起慢慢变好`;
+  const SAMPLE = `# 少吃一口糖，身体会谢谢你\n## 21 天温和减糖计划\n不靠硬扑，而是重新认识食物。三个不费力的小改变，从今天开始。\n\n---\n\n## 三个温柔的开始\n\n- 把含糖饮料换成**气泡水 + 柠檬**\n- 主食里泥一半**糙米与豆类**\n- 嘴馋时先喝一杯水，==等十分钟==\n\n---\n\n## 为什么有效\n\n血糖平稳了，*情绪和精力*也会跟着稳。\n\n1. 减少胰岛素的剧烈波动\n2. 延长饱腹感，自然少吃\n3. 让味觉慢慢变得敏锐\n\n> 改变不必剧烈，坚持才会发光。\n\n---\n\n# 从今天开始\n## 给身体多一点温柔\n少吃一口糖，不是剥夺，而是更懂得照顾自己。\n\n如果这份计划帮到你，点亮**收藏**，明天接着看。\n\n> 关注 · 一起慢慢变好`;
 
   const $ = (id) => document.getElementById(id);
   const input = $("input");
@@ -172,7 +172,7 @@
       const on = i === cur ? " active" : "";
       let glyph = "";
       if (kind === "numbers") glyph = String(i).padStart(2, "0");
-      else if (kind === "arrows") glyph = i === cur ? "▶" : "›";
+      else if (kind === "arrows") glyph = i === cur ? "\u25b6" : "\u203a";
       marks += `<span class="pg${on}">${glyph}</span>`;
     }
     return `<div class="card-progress kind-${kind}">${marks}</div>`;
@@ -348,6 +348,7 @@
 
     const eyebrow = $("eyebrow").value.trim();
     const brand = $("brand").value.trim();
+    const issue = $("issue").value.trim();
     const no = String(index + 1).padStart(2, "0");
     const tot = String(total).padStart(2, "0");
 
@@ -366,6 +367,21 @@
     const anchorHtml = (isBody && !hasBodyFig)
       ? `<div class="card-anchor">${String(bodyNo).padStart(2, "0")}</div>`
       : "";
+
+    // 封面动线（B）：大期号 + 竖排引导 + meta 信息线（仅首页生成，样式仅 Kinfolk 启用）
+    let coverFlowHtml = "";
+    if (isCover) {
+      const vside = eyebrow.includes("/") ? eyebrow.split("/")[0].trim() : eyebrow.trim();
+      const eyeTail = eyebrow.includes("/") ? eyebrow.split("/").slice(1).join("/").trim() : "";
+      const metaParts = [String(new Date().getFullYear())];
+      if (eyeTail) metaParts.push(eyeTail);
+      if (issue) metaParts.push(issue);
+      const issueHtml = issue ? `<div class="cv-issue">${escapeAttr(issue)}</div>` : "";
+      const vsideHtml = vside ? `<div class="cv-vside">${escapeAttr(vside)}</div>` : "";
+      const metaHtml = metaParts.length ? `<div class="cv-meta">${escapeAttr(metaParts.join("  \u00b7  "))}</div>` : "";
+      coverFlowHtml = `<div class="cover-flow" aria-hidden="true">${issueHtml}${vsideHtml}${metaHtml}</div>`;
+    }
+
     const media = useImg
       ? `<div class="card-media"><img src="${escapeAttr(imgUrl)}" crossorigin="anonymous" alt="" /></div>`
       : "";
@@ -384,7 +400,7 @@
     } else {
       inner = media + `<div class="li-content">${headHtml}${bodyHtml}${footHtml}</div>`;
     }
-    card.innerHTML = inner + anchorHtml + buildGrid(theme, base);
+    card.innerHTML = inner + coverFlowHtml + anchorHtml + buildGrid(theme, base);
     applyColorsToCard();
 
     counter.textContent = `${no} / ${tot}`;
@@ -467,6 +483,7 @@
   $("showGrid").addEventListener("change", () => renderPage(index));
   $("eyebrow").addEventListener("input", () => renderPage(index));
   $("brand").addEventListener("input", () => renderPage(index));
+  $("issue").addEventListener("input", () => renderPage(index));
   $("prev").addEventListener("click", () => renderPage(index - 1));
   $("next").addEventListener("click", () => renderPage(index + 1));
   $("exportOne").addEventListener("click", exportOne);
