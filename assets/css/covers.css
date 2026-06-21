@@ -262,3 +262,19 @@
 .card.cv-glass-split .li-content { justify-content:center; }
 .card.role-cover.cv-glass-split .card-body h1 { font-size:74px; line-height:1.08; }
 .card.role-cover.cv-glass-card .card-body h1 { font-size:66px; }
+
+/* ====================================================================
+   END PAGE — 尾页（收尾 / 行动号召），与 role-body 叠加使用
+   尾页 = role-body（继承各主题正文配色）+ role-end（居中收尾排版）
+   ==================================================================== */
+.card.role-end .card-body {
+  display:flex; flex-direction:column; justify-content:center;
+  align-items:center; text-align:center;
+}
+.card.role-end .card-eyebrow { justify-content:center; }
+.card.role-end .card-body h1 { font-size:84px; line-height:1.08; margin:0 0 30px; }
+.card.role-end .card-body h2 { font-size:40px; font-weight:500; color:var(--card-dim); margin:0 0 26px; }
+.card.role-end .card-body p { font-size:34px; line-height:1.55; color:var(--card-dim); margin:0 0 18px; }
+.card.role-end .card-body strong { color:var(--card-accent); }
+.card.role-end .card-body blockquote { font-size:36px; font-style:italic; border:none; padding:0; margin:28px 0 0; }
+.card.role-end .card-foot { justify-content:center; }
