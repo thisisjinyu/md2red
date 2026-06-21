@@ -121,6 +121,29 @@ body {
 }
 .card-eyebrow::after { content: ""; flex: 1; height: 1px; background: var(--card-rule); }
 
+/* ---------- 页眉栏：栏目 + 页码进度（右上角） ---------- */
+.card-head { display: flex; align-items: center; gap: 28px; margin-bottom: 40px; }
+.card .card-head .card-eyebrow { flex: 1; margin-bottom: 0; }
+.card-progress { flex: none; display: flex; align-items: center; gap: 9px; line-height: 1; }
+.card-progress .pg { color: var(--card-dim); opacity: 0.6; display: inline-flex; align-items: center; justify-content: center; }
+.card-progress .pg.active { color: var(--card-accent); opacity: 1; }
+/* 圆点 */
+.card-progress.kind-dots .pg { width: 12px; height: 12px; border-radius: 50%; background: currentColor; }
+.card-progress.kind-dots .pg.active { width: 15px; height: 15px; }
+/* 点线 */
+.card-progress.kind-dashes { gap: 7px; }
+.card-progress.kind-dashes .pg { width: 16px; height: 3px; border-radius: 2px; background: currentColor; }
+.card-progress.kind-dashes .pg.active { width: 32px; height: 4px; }
+/* 方块 */
+.card-progress.kind-bars { gap: 6px; }
+.card-progress.kind-bars .pg { width: 16px; height: 10px; background: currentColor; }
+.card-progress.kind-bars .pg.active { height: 20px; }
+/* 数字 */
+.card-progress.kind-numbers { gap: 14px; font-family: var(--font-serif); font-size: 24px; letter-spacing: 1px; }
+.card-progress.kind-numbers .pg.active { font-size: 30px; font-weight: 700; }
+/* 箭头 */
+.card-progress.kind-arrows { gap: 10px; font-size: 26px; font-weight: 700; }
+
 .card-body { flex: 1; min-height: 0; overflow: hidden; }
 .card-body > *:first-child { margin-top: 0; }
 .card-body h1 { font-family: var(--font-serif); font-size: 92px; line-height: 1.06; font-weight: 700; letter-spacing: -0.5px; margin: 8px 0 36px; }
@@ -144,10 +167,11 @@ body {
 .card-body img { width: 100%; border-radius: 8px; display: block; }
 .card-foot {
   position: absolute; left: 88px; right: 88px; bottom: 64px;
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: center; justify-content: flex-end;
   font-family: var(--font-sans); font-size: 22px; letter-spacing: 2px; color: var(--card-dim);
   border-top: 1px solid var(--card-rule); padding-top: 22px;
 }
+.card-foot .card-brand { font-family: var(--font-sans); }
 .card-foot .page-no { font-family: var(--font-serif); font-size: 26px; color: var(--card-ink); }
 
 /* ====================================================================
