@@ -312,9 +312,10 @@
 
 /* ====================================================================
    BODY WHITESPACE — 正文留白处理（自动规则）
-   有图 → .bf：末尾通栏图沉底出血，撑满下方
+   有图 → .bf：文字照常顶部排布（与无图版完全一致，引用不随图移动）；
+           末尾图片收进版心成为固定图框，自动填满文字与页脚之间，
+           顶部与底部各留固定间距；框内图片可拖拽平移 + 滚轮缩放（逻辑在 app.js）
    无图 → .card-anchor：浅色巨大序号沉右下，主动消费留白
-   判断逻辑在 app.js（hasBodyFig）
    ==================================================================== */
 .card.role-body .card-body { position:relative; z-index:1; }
 .card-anchor {
@@ -323,18 +324,25 @@
   font-size:300px; line-height:0.78; letter-spacing:-4px;
   color:var(--card-accent); opacity:0.10; pointer-events:none; user-select:none;
 }
-.card.role-body.bf::before { display:none; }
 .card.role-body.bf .card-body { display:flex; flex-direction:column; }
-/* flex 纵向下外边距不再折叠（间距会相加翻倍）：清零各元素上外边距，
-   间距统一由下外边距决定，使有图版与无图版节奏一致；图片 auto 边距保留 */
-.card.role-body.bf .card-body > *:not(figure) { margin-top:0; }
-.card.role-body.bf .card-body figure.card-fig.fig-band:last-child { margin:auto -88px 0; flex:none; }
-.card.role-body.bf .card-body figure.card-fig.fig-band:last-child img { height:540px; object-fit:cover; border-radius:0; box-shadow:none; }
+.card.role-body.bf .card-body .body-text { flex:0 0 auto; }
+.card.role-body.bf .card-body .body-text > *:first-child { margin-top:0; }
+.card.role-body.bf .card-body .body-text > *:last-child { margin-bottom:0; }
+.card.role-body.bf .card-body .body-figure {
+  flex:1 1 auto; min-height:0; position:relative; overflow:hidden;
+  margin-top:40px; margin-bottom:33px; border-radius:8px; background:#e9e6df;
+}
+.card.role-body.bf .card-body .body-figure img {
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; border-radius:0; box-shadow:none;
+  transform-origin:center center; will-change:transform; cursor:grab;
+}
+.card.role-body.bf .card-body .body-figure img:active { cursor:grabbing; }
 
 /* ====================================================================
    COVER FLOW (C) — 封面动线：栏目(顶) → 标题(中) → 导语(底)
    仅 Kinfolk 封面启用；纯排版节奏，无装饰元素
-   栏目留在顶部，标题下沉至版心，末段作导语沉底，形成纵向动线
+   栏目留在顶部，标题下沉至版心，末段作导语沉底，形成竖向动线
    ==================================================================== */
 
 /* 无图封面：标题下沉至版心中部（拉开与栏目间距），末段导语沉底 */
