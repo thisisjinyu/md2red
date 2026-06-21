@@ -90,6 +90,15 @@
     ],
   };
 
+  // 各风格页码进度的视觉类型：dots/dashes/bars/numbers/arrows
+  const PROGRESS_KIND = {
+    gallery: "dots", kinfolk: "dots", swiss: "numbers", editorial: "numbers",
+    wabi: "dashes", aero: "dots", glass: "dots", bauhaus: "bars",
+    mondrian: "numbers", brutalism: "numbers", artdeco: "dashes", memphis: "bars",
+    vaporwave: "bars", cyberpunk: "arrows", riso: "dots", acid: "bars",
+    y2k: "bars", anti: "arrows",
+  };
+
   // 示例：首页=封面（主标题/副标题/描述），中间=正文，末页=尾页（收尾/行动号召）
   const SAMPLE = `# 少吃一口糖，身体会谢谢你\n## 21 天温和减糖计划\n不靠硬扛，而是重新认识食物。三个不费力的小改变，从今天开始。\n\n---\n\n## 三个温柔的开始\n\n- 把含糖饮料换成**气泡水 + 柠檬**\n- 主食里掺一半**糙米与豆类**\n- 嘴馋时先喝一杯水，==等十分钟==\n\n---\n\n## 为什么有效\n\n血糖平稳了，*情绪和精力*也会跟着稳。\n\n1. 减少胰岛素的剧烈波动\n2. 延长饱腹感，自然少吃\n3. 让味觉慢慢变得敏锐\n\n> 改变不必剧烈，坚持才会发光。\n\n---\n\n# 从今天开始\n## 给身体多一点温柔\n少吃一口糖，不是剥夺，而是更懂得照顾自己。\n\n如果这份计划帮到你，点亮**收藏**，明天接着看。\n\n> 关注 · 一起慢慢变好`;
 
@@ -144,6 +153,21 @@
     });
     const hasPrev = Array.prototype.some.call(sel.options, (o) => o.value === prev);
     sel.value = hasPrev ? prev : (list.length ? list[0].id : "");
+  }
+
+  // 页眉右上角页码进度：当前页用突出色，其他页弱化
+  function buildProgress(theme, cur, tot) {
+    if (tot < 1) return "";
+    const kind = PROGRESS_KIND[theme] || "dots";
+    let marks = "";
+    for (let i = 1; i <= tot; i++) {
+      const on = i === cur ? " active" : "";
+      let glyph = "";
+      if (kind === "numbers") glyph = String(i).padStart(2, "0");
+      else if (kind === "arrows") glyph = i === cur ? "▶" : "›";
+      marks += `<span class="pg${on}">${glyph}</span>`;
+    }
+    return `<div class="card-progress kind-${kind}">${marks}</div>`;
   }
 
   /* ---------- 颜色工具 ---------- */
@@ -267,6 +291,7 @@
     const imgUrl = $("imageUrl").value.trim();
     const isCover = index === 0;
     const isEnd = total > 1 && index === total - 1;
+    const isBody = !isCover && !isEnd;
     const noImg = $("noImage").checked;
 
     const list = variantsFor(theme);
@@ -292,27 +317,35 @@
     const no = String(index + 1).padStart(2, "0");
     const tot = String(total).padStart(2, "0");
 
+    // 正文页码按顺序编排（不含首页封面与末页尾页）
+    const bodyTotal = Math.max(0, total - 2);
+    const bodyNo = isBody ? index : 0;
+
     const eyebrowHtml = eyebrow ? `<div class="card-eyebrow">${escapeAttr(eyebrow)}</div>` : "";
+    const progressHtml = isBody ? buildProgress(theme, bodyNo, bodyTotal) : "";
+    const headHtml = isBody
+      ? `<div class="card-head">${eyebrowHtml}${progressHtml}</div>`
+      : eyebrowHtml;
     const md = window.mdToHtml(pages[index]);
     const bodyHtml = `<div class="card-body">${md}</div>`;
-    const footHtml = `<div class="card-foot"><span>${escapeAttr(brand)}</span><span class="page-no">${no} / ${tot}</span></div>`;
+    const footHtml = `<div class="card-foot"><span class="card-brand">${escapeAttr(brand)}</span></div>`;
     const media = useImg
       ? `<div class="card-media"><img src="${escapeAttr(imgUrl)}" crossorigin="anonymous" alt="" /></div>`
       : "";
 
     let inner;
     if (!useImg) {
-      inner = eyebrowHtml + bodyHtml + footHtml;
+      inner = headHtml + bodyHtml + footHtml;
     } else if (base === "module") {
-      inner = eyebrowHtml + `<div class="card-body">${media}${md}</div>` + footHtml;
+      inner = headHtml + `<div class="card-body">${media}${md}</div>` + footHtml;
     } else if (base === "frame") {
-      inner = media + eyebrowHtml + bodyHtml + footHtml;
+      inner = media + headHtml + bodyHtml + footHtml;
     } else if (base === "bg") {
-      inner = media + `<div class="li-content"><div class="li-panel">${eyebrowHtml}${bodyHtml}</div>${footHtml}</div>`;
+      inner = media + `<div class="li-content"><div class="li-panel">${headHtml}${bodyHtml}</div>${footHtml}</div>`;
     } else if (base === "bottom") {
-      inner = `<div class="li-content">${eyebrowHtml}${bodyHtml}${footHtml}</div>` + media;
+      inner = `<div class="li-content">${headHtml}${bodyHtml}${footHtml}</div>` + media;
     } else {
-      inner = media + `<div class="li-content">${eyebrowHtml}${bodyHtml}${footHtml}</div>`;
+      inner = media + `<div class="li-content">${headHtml}${bodyHtml}${footHtml}</div>`;
     }
     card.innerHTML = inner;
     applyColorsToCard();

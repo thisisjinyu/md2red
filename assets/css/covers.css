@@ -173,7 +173,7 @@
 .card[data-theme="editorial"].role-body { text-align:left; }
 .card[data-theme="editorial"].role-body .card-eyebrow { justify-content:flex-start; }
 .card[data-theme="editorial"].role-body .card-eyebrow::before { display:none; }
-.card[data-theme="editorial"].role-body .card-foot { justify-content:space-between; }
+.card[data-theme="editorial"].role-body .card-foot { justify-content:flex-end; }
 
 .card[data-theme="aero"].role-body { background:#e9f7ff; }
 
@@ -277,4 +277,4 @@
 .card.role-end .card-body p { font-size:34px; line-height:1.55; color:var(--card-dim); margin:0 0 18px; }
 .card.role-end .card-body strong { color:var(--card-accent); }
 .card.role-end .card-body blockquote { font-size:36px; font-style:italic; border:none; padding:0; margin:28px 0 0; }
-.card.role-end .card-foot { justify-content:center; }
+.card.role-end .card-foot { justify-content:flex-end; }
