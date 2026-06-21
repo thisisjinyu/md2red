@@ -364,3 +364,19 @@
   font-size:29px; font-weight:300; line-height:1.7; letter-spacing:0.5px;
   color:var(--card-dim);
 }
+
+/* ====================================================================
+   KINFOLK 封面（极简留白）— airy 改版
+   顶图 55%（可拖拽缩放）+ 大标题 + 标题下方正文，去页眉页脚
+   （与上方 COVER FLOW C 仅对 airy 覆盖，不影响 square/half 与无图封面）
+   ==================================================================== */
+.card.role-cover.cv-kinfolk-airy.layout-top .card-media { height:55%; }
+.card.role-cover.cv-kinfolk-airy .card-eyebrow,
+.card.role-cover.cv-kinfolk-airy .card-foot { display:none; }
+.card.role-cover.cv-kinfolk-airy.has-img .card-media img { cursor:grab; transform-origin:center center; will-change:transform; }
+.card.role-cover.cv-kinfolk-airy.has-img .card-media img:active { cursor:grabbing; }
+.card[data-theme="kinfolk"].role-cover.cv-kinfolk-airy.has-img .li-content { justify-content:flex-start; padding:60px 88px 72px; }
+.card[data-theme="kinfolk"].role-cover.cv-kinfolk-airy.has-img .card-body { flex:0 1 auto; display:block; }
+.card[data-theme="kinfolk"].role-cover.cv-kinfolk-airy.has-img .card-body h1 { margin:0 0 32px; font-size:88px; font-weight:400; letter-spacing:1px; line-height:1.16; }
+.card[data-theme="kinfolk"].role-cover.cv-kinfolk-airy.has-img .card-body h2 { margin:0 0 26px; }
+.card[data-theme="kinfolk"].role-cover.cv-kinfolk-airy.has-img .card-body p:last-child { margin-top:0; max-width:100%; font-size:32px; line-height:1.7; }
