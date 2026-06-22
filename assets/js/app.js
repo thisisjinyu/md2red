@@ -64,7 +64,7 @@
       { id: "band", label: "撞色顶图", base: "top" },
     ],
     vaporwave: [
-      { id: "neon", label: "满版霓虹", base: "bg" },
+      { id: "neon", label: "满版霾虹", base: "bg" },
       { id: "glitchtop", label: "故障顶图", base: "top" },
     ],
     cyberpunk: [
@@ -490,46 +490,45 @@
     renderPage(index);
   }
 
-  async function capture() {
-    await (document.fonts ? document.fonts.ready : Promise.resolve());
-    const prev = card.style.transform;
-    card.style.transform = "none";
-    card.classList.add("exporting"); // 导出时隐藏网格参考层
-    const canvas = await html2canvas(card, { scale: 2, useCORS: true, backgroundColor: null, logging: false });
-    card.classList.remove("exporting");
-    card.style.transform = prev;
-    fit();
-    return canvas;
-  }
-
-  function download(canvas, name) {
-    const a = document.createElement("a");
-    a.href = canvas.toDataURL("image/png");
-    a.download = name;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  }
-
-  async function exportOne() {
-    if ($("autoColor").checked) { await ensureColors($("imageUrl").value.trim()); renderPage(index); }
-    const canvas = await capture();
-    download(canvas, `xhs-${String(index + 1).padStart(2, "0")}.png`);
-  }
-
-  async function exportAll() {
-    if ($("autoColor").checked) { await ensureColors($("imageUrl").value.trim()); }
-    const total = pages.length;
-    const start = index;
-    for (let i = 0; i < total; i++) {
+  /* ---------- 导出 PDF（浏览器原生打印，矢量输出，不再用 html2canvas 光栅化） ---------- */
+  // 把指定页渲染成全尺寸卡片克隆，放进打印容器；每张卡片占一页
+  function buildPrintRoot(indices) {
+    const old = document.getElementById("print-root");
+    if (old) old.remove();
+    const root = document.createElement("div");
+    root.id = "print-root";
+    const cur = index;
+    indices.forEach((i) => {
       renderPage(i);
-      await new Promise((r) => setTimeout(r, 120));
-      const canvas = await capture();
-      download(canvas, `xhs-${String(i + 1).padStart(2, "0")}.png`);
-      await new Promise((r) => setTimeout(r, 200));
-    }
-    renderPage(start);
+      const clone = card.cloneNode(true);
+      clone.removeAttribute("id");
+      clone.classList.remove("grid-on"); // PDF 不含网格参考
+      clone.style.transform = "none";    // 全尺寸输出，去掉预览缩放
+      const page = document.createElement("div");
+      page.className = "print-page";
+      page.appendChild(clone);
+      root.appendChild(page);
+    });
+    document.body.appendChild(root);
+    renderPage(cur); // 还原预览
+    return root;
   }
+
+  async function exportPdf(indices) {
+    if (document.fonts) { try { await document.fonts.ready; } catch (e) {} }
+    if ($("autoColor").checked) { await ensureColors($("imageUrl").value.trim()); }
+    const root = buildPrintRoot(indices);
+    const cleanup = () => {
+      root.remove();
+      window.removeEventListener("afterprint", cleanup);
+    };
+    window.addEventListener("afterprint", cleanup);
+    // 留一帧让打印布局生效再唤起打印对话框（在对话框中选“另存为 PDF”）
+    setTimeout(() => window.print(), 80);
+  }
+
+  function exportOne() { return exportPdf([index]); }
+  function exportAll() { return exportPdf(pages.map((_, i) => i)); }
 
   input.addEventListener("input", () => rebuild(true));
   $("theme").addEventListener("change", onThemeChange);
